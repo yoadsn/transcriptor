@@ -1,0 +1,74 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background-color: var(--color-surface);
+  border-bottom: var(--border-width) solid var(--color-border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.brand {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--color-text);
+  letter-spacing: -0.01em;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+
+.pageInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.todayCount {
+  font-variant-numeric: tabular-nums;
+  color: var(--color-success);
+  font-weight: 600;
+}
+
+.progressWrapper {
+  width: 100px;
+  height: 6px;
+  background-color: var(--color-muted);
+  border-radius: 3px;
+  overflow: hidden;
+  direction: ltr;
+}
+
+.progressBar {
+  height: 100%;
+  background-color: var(--color-accent);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+  transform-origin: right center;
+}
+
+@media (max-width: 768px) {
+  .header {
+    padding: 0.5rem 0.75rem;
+  }
+
+  .brand {
+    font-size: 1rem;
+  }
+
+  .meta {
+    gap: 0.5rem;
+    font-size: 0.8rem;
+  }
+
+  .progressWrapper {
+    width: 60px;
+  }
+}

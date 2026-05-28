@@ -1,0 +1,44 @@
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-muted) 25%,
+    var(--color-border) 50%,
+    var(--color-muted) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-md);
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.stripSkeleton {
+  height: 48px;
+  width: 100%;
+  margin: 0.25rem 0;
+}
+
+.activeSkeleton {
+  height: 100px;
+  width: 100%;
+  margin: 0.5rem 0;
+}
+
+.inputSkeleton {
+  height: 80px;
+  width: 100%;
+  margin: 0.5rem 0;
+}
+
+.barSkeleton {
+  height: 48px;
+  width: 100%;
+  margin-top: 0.5rem;
+}

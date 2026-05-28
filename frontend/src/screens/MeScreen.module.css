@@ -1,0 +1,142 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--color-bg);
+  padding: 1.5rem 1rem;
+  direction: rtl;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.backLink {
+  font-size: 0.875rem;
+  color: var(--color-accent);
+  text-decoration: underline;
+}
+
+.content {
+  max-width: 600px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.metricCard {
+  background-color: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.metricNumber {
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--color-success);
+  direction: ltr;
+  font-variant-numeric: tabular-nums;
+}
+
+.metricLabel {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+.leaderboardSection {
+  background-color: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.leaderboardTitle {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  padding: 1rem 1.25rem;
+  border-bottom: var(--border-width) solid var(--color-border);
+  color: var(--color-text);
+}
+
+.leaderboardList {
+  display: flex;
+  flex-direction: column;
+}
+
+.leaderboardItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.25rem;
+  border-bottom: var(--border-width) solid var(--color-border);
+  transition: background-color 0.1s ease;
+}
+
+.leaderboardItem:last-child {
+  border-bottom: none;
+}
+
+.leaderboardItemMe {
+  background-color: rgba(37, 99, 235, 0.06);
+}
+
+.rank {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  min-width: 1.5rem;
+  direction: ltr;
+}
+
+.displayName {
+  flex: 1;
+  padding: 0 0.75rem;
+  font-size: 0.9rem;
+  color: var(--color-text);
+}
+
+.lineCount {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  direction: ltr;
+  font-variant-numeric: tabular-nums;
+}
+
+.privacyNotice {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  text-align: center;
+  padding: 0 0.5rem;
+}
+
+.loading {
+  text-align: center;
+  color: var(--color-text-muted);
+  padding: 2rem;
+}
+
+@media (max-width: 768px) {
+  .page {
+    padding: 1rem 0.75rem;
+  }
+}

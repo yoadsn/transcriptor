@@ -1,0 +1,32 @@
+@import './reset.css';
+
+:root {
+  --color-bg: #f8f7f4;
+  --color-surface: #ffffff;
+  --color-muted: #f0ede8;
+  --color-accent: #2563eb;
+  --color-success: #16a34a;
+  --color-neutral: #6b7280;
+  --color-text: #1a1a1a;
+  --color-text-muted: #6b7280;
+  --color-border: #e5e2dc;
+  --font-sans: system-ui, -apple-system, sans-serif;
+  --font-serif: Georgia, 'Times New Roman', serif;
+  --radius-md: 6px;
+  --radius-lg: 12px;
+  --border-width: 0.5px;
+  --border-active: 2px;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  direction: rtl;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}

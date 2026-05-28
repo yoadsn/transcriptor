@@ -1,0 +1,35 @@
+.toast {
+  position: fixed;
+  bottom: 5rem;
+  left: 1rem;
+  background-color: var(--color-text);
+  color: #ffffff;
+  padding: 0.625rem 1rem;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  z-index: 100;
+  max-width: 320px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  animation: slideIn 0.2s ease;
+  direction: rtl;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(8px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .toast {
+    right: 1rem;
+    left: 1rem;
+    bottom: 6rem;
+    max-width: none;
+  }
+}

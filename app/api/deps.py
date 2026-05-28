@@ -1,0 +1,56 @@
+from typing import Annotated
+
+from fastapi import Depends, HTTPException
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from sqlalchemy.orm import Session
+
+from app.config import settings
+from app.db import get_db
+from app.models.user import User
+from app.services.consent import has_active_contribution_consent
+from app.services.users import get_or_create_user
+
+security = HTTPBearer(auto_error=False)
+
+_DEV_USER_SUB = "dev-user-001"
+_DEV_USER_EMAIL = "dev@localhost"
+_DEV_USER_NAME = "Dev User"
+
+
+def _verify_google_token(token: str) -> dict:
+    # Production: verify Google OIDC token here.
+    # Tests override get_current_user entirely, so this path is never hit in tests.
+    raise HTTPException(status_code=401, detail="Not authenticated")
+
+
+def get_current_user(
+    credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(security)],
+    db: Annotated[Session, Depends(get_db)],
+) -> User:
+    if settings.dev_mode:
+        return get_or_create_user(
+            db,
+            google_sub=_DEV_USER_SUB,
+            email=_DEV_USER_EMAIL,
+            display_name=_DEV_USER_NAME,
+        )
+    if credentials is None:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    claims = _verify_google_token(credentials.credentials)
+    return get_or_create_user(
+        db,
+        google_sub=claims["sub"],
+        email=claims["email"],
+        display_name=claims.get("name", claims["email"]),
+    )
+
+
+def require_contribution_consent(
+    user: Annotated[User, Depends(get_current_user)],
+    db: Annotated[Session, Depends(get_db)],
+) -> User:
+    if settings.dev_mode:
+        return user
+    if not has_active_contribution_consent(db, user, settings.consent_version):
+        raise HTTPException(status_code=403, detail="Contribution consent required")
+    return user

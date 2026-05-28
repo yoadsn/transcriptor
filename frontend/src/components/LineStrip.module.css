@@ -1,0 +1,44 @@
+.strip {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 0 auto;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background-color: var(--color-muted);
+  position: relative;
+}
+
+.stripActive {
+  outline: var(--border-active) solid var(--color-accent);
+  outline-offset: 1px;
+  opacity: 1;
+}
+
+.stripContext {
+  opacity: 0.4;
+}
+
+.image {
+  display: block;
+}
+
+.label {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  padding: 0.25rem 0.5rem;
+  background-color: var(--color-muted);
+  border-top: var(--border-width) solid var(--color-border);
+  width: 100%;
+  direction: rtl;
+}
+
+@media (max-width: 768px) {
+  .strip {
+    width: 100% !important;
+  }
+
+  .image {
+    width: 100% !important;
+  }
+}
