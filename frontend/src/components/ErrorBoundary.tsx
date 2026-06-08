@@ -52,7 +52,7 @@ export class ErrorBoundary extends Component<Props, State> {
               fontSize: '1rem',
             }}
           >
-            רענן דף
+            לרענן דף
           </button>
         </div>
       )

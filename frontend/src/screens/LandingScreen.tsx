@@ -9,14 +9,14 @@ const fmt = (n: number) =>
 const COMMUNITY_FALLBACK = [
   { v: '—', l: 'שורות תועתקו' },
   { v: '—', l: 'עמודים הושלמו' },
-  { v: '—', l: 'מתנדבים' },
+  { v: '—', l: 'מתנדבים ומתנדבות' },
   { v: '—', l: 'כתבי יד' },
 ]
 
 const HOW_IT_WORKS = [
-  { n: '1', t: 'קוראים את השורה המודגשת',  d: 'רואים שורה מתוך כתב יד היסטורי, מודגשת עבורכם.' },
-  { n: '2', t: 'מקלידים מה שכתוב',          d: 'מקלידים בדיוק את מה שמופיע — בלי לתקן ובלי לנחש.' },
-  { n: '3', t: 'שולחים וממשיכים',            d: 'הנתונים נשמרים ועוברים לאימון מודל.' },
+  { n: '1', t: 'קוראים את השורה המודגשת',  d: 'כל פעם שורה אחת מתוך כתב היד.' },
+  { n: '2', t: 'מקלידים מה שכתוב',          d: 'בדיוק כפי שמופיע: בלי לתקן ובלי לנחש' },
+  { n: '3', t: 'שולחים וממשיכים',            d: 'וכך מצטברות להן השורות' },
 ]
 
 function CommunityStrip({ compact, items }: { compact?: boolean; items: { v: string; l: string }[] }) {
@@ -81,15 +81,6 @@ export function LandingScreen() {
             fontSize: 12.5, fontWeight: 600,
             color: 'oklch(0.55 0.1 60)', letterSpacing: '0.04em', marginBottom: 10,
           }}>תיעוד כתבי יד עבריים</div>
-          <h1 style={{
-            fontFamily: 'var(--font-serif)',
-            fontSize: 33, fontWeight: 500,
-            lineHeight: 1.18, color: 'var(--tl-ink)',
-            margin: '0 0 14px', textWrap: 'balance',
-          } as React.CSSProperties}>
-            עוזרים לפענח את העבר, שורה אחת בכל פעם
-          </h1>
-
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 26 }}>
             <PrimaryBtn size="lg" onClick={onStart} style={{ width: '100%', justifyContent: 'center' }}>
               התחל לתעתק <Icon name="forward" size={17} color="#fff" />
@@ -150,21 +141,7 @@ export function LandingScreen() {
           <div style={{
             fontSize: 13.5, fontWeight: 600,
             color: 'oklch(0.55 0.1 60)', letterSpacing: '0.04em', marginBottom: 14,
-          }}>תיעוד כתבי יד עבריים</div>
-          <h1 style={{
-            fontFamily: 'var(--font-serif)',
-            fontSize: 52, fontWeight: 500,
-            lineHeight: 1.14, color: 'var(--tl-ink)',
-            margin: '0 0 18px', textWrap: 'balance',
-          } as React.CSSProperties}>
-            עוזרים לפענח את העבר, שורה אחת בכל פעם
-          </h1>
-          <p style={{
-            fontFamily: 'var(--font-ui)', fontSize: 17, lineHeight: 1.6,
-            color: 'var(--tl-muted)', margin: '0 0 28px', maxWidth: 480,
-          }}>
-            כל שורה שתתעתקו עוזרת ללמד מחשב לקרוא כתב יד עברי. ביחד עם מאות מתנדבים — שורה אחת בכל פעם.
-          </p>
+          }}>יחד נלמד א המחשב לקרוא עברית</div>
           <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
             <PrimaryBtn size="lg" onClick={onStart}>
               התחל לתעתק <Icon name="forward" size={18} color="#fff" />

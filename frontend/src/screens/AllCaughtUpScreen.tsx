@@ -1,5 +1,4 @@
-import { useNavigate } from 'react-router-dom'
-import { TopNav, Icon } from '../components/shared'
+import { TopNav } from '../components/shared'
 
 const fmt = (n: number) => new Intl.NumberFormat('en-US').format(n)
 
@@ -44,7 +43,6 @@ function CaughtUpStats({ isMobile }: { isMobile?: boolean }) {
 }
 
 export function AllCaughtUpScreen() {
-  const navigate = useNavigate()
   const isMobile = window.innerWidth < 768
 
   const body = (
@@ -74,14 +72,14 @@ export function AllCaughtUpScreen() {
         fontSize: isMobile ? 30 : 38, fontWeight: 500,
         color: 'var(--tl-ink)', margin: '0 0 12px', lineHeight: 1.15,
       }}>
-        סיימת את כל מה שזמין
+        לא עליך המלאכה לגמור :)
       </h1>
       <p style={{
         fontFamily: 'var(--font-ui)',
         fontSize: isMobile ? 15.5 : 17, color: 'var(--tl-muted)',
         margin: '0 0 30px', lineHeight: 1.6,
       }}>
-        תועתקו כל השורות הזמינות. נוסיף עוד בקרוב — בינתיים אפשר לעיין בשורות שתרמת.
+        אבל כל השורות תועתקו בינתיים. נוסיף שורות חדשות בקרוב.
       </p>
 
       <div style={{
@@ -93,38 +91,6 @@ export function AllCaughtUpScreen() {
         <CaughtUpStats isMobile={isMobile} />
       </div>
 
-      <div style={{
-        display: 'flex',
-        flexDirection: isMobile ? 'column' : 'row',
-        gap: 12, width: isMobile ? '100%' : 'auto',
-        justifyContent: 'center',
-      }}>
-        <button
-          className="pg-primary"
-          onClick={() => navigate('/me')}
-          style={{ fontSize: 17, padding: '14px 28px', justifyContent: 'center', width: isMobile ? '100%' : 'auto' }}
-        >
-          ההתקדמות שלי <Icon name="forward" size={17} color="#fff" />
-        </button>
-        <button
-          className="pg-ghost"
-          style={{ fontSize: 17, padding: '14px 24px', justifyContent: 'center', width: isMobile ? '100%' : 'auto' }}
-        >
-          עדכנו אותי במייל
-        </button>
-      </div>
-
-      <button
-        onClick={() => navigate('/me')}
-        style={{
-          marginTop: 20,
-          fontFamily: 'var(--font-ui)', fontSize: 14, fontWeight: 500,
-          color: 'var(--tl-accent)', background: 'none', border: 'none',
-          cursor: 'pointer', textDecoration: 'underline', textUnderlineOffset: 3,
-        }}
-      >
-        עיון בשורות שתעתקתם
-      </button>
     </div>
   )
 

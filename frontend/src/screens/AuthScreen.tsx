@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useSession } from '../contexts/SessionContext'
 import { BrandMark, ManuscriptPreview, PrimaryBtn } from '../components/shared'
@@ -14,52 +14,8 @@ function GoogleMark({ size = 18 }: { size?: number }) {
   )
 }
 
-function AuthField({ label, type, placeholder, value, onChange }: {
-  label: string
-  type: string
-  placeholder: string
-  value: string
-  onChange: (v: string) => void
-}) {
-  return (
-    <label style={{ display: 'block' }}>
-      <span style={{
-        display: 'block',
-        fontFamily: 'var(--font-ui)', fontSize: 13, fontWeight: 500,
-        color: 'var(--tl-ink)', marginBottom: 6,
-      }}>{label}</span>
-      <input
-        type={type}
-        placeholder={placeholder}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        dir="auto"
-        className="pg-input"
-      />
-    </label>
-  )
-}
-
-interface AuthFormProps {
-  mode: 'signin' | 'signup'
-  isMobile?: boolean
-  onSwitchMode: () => void
-  onGuest: () => void
-}
-
-function AuthForm({ mode, isMobile, onSwitchMode, onGuest }: AuthFormProps) {
-  const signup = mode === 'signup'
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-
+function AuthForm({ isMobile }: { isMobile?: boolean }) {
   const handleGoogle = () => {
-    window.location.href = '/api/auth/google'
-  }
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // Wired to backend in Phase 5 — for now navigate happens via token redirect
     window.location.href = '/api/auth/google'
   }
 
@@ -70,60 +26,18 @@ function AuthForm({ mode, isMobile, onSwitchMode, onGuest }: AuthFormProps) {
         fontSize: isMobile ? 28 : 34, fontWeight: 500,
         color: 'var(--tl-ink)', margin: '0 0 6px',
       }}>
-        {signup ? 'הצטרפו לתעתוק' : 'ברוכים השבים'}
+        ברוך שובך
       </h1>
       <p style={{
         fontFamily: 'var(--font-ui)', fontSize: 15,
         color: 'var(--tl-muted)', margin: '0 0 24px', lineHeight: 1.5,
       }}>
-        {signup
-          ? 'הצטרפו ותרמו לשימור כתבי יד עבריים.'
-          : 'להתחבר כדי להמשיך מהיכן שעצרת.'}
+        להתחבר כדי להמשיך מהיכן שעצרת.
       </p>
 
       <button className="pg-oauth" onClick={handleGoogle} type="button">
         <GoogleMark /> המשך עם Google
       </button>
-
-      <div style={{
-        display: 'flex', alignItems: 'center', gap: 12,
-        margin: '18px 0',
-        fontFamily: 'var(--font-ui)', fontSize: 12.5, color: 'var(--tl-muted)',
-      }}>
-        <div style={{ flex: 1, height: 1, background: 'var(--tl-border)' }} />
-        <span>או</span>
-        <div style={{ flex: 1, height: 1, background: 'var(--tl-border)' }} />
-      </div>
-
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-        {signup && (
-          <AuthField label="שם" type="text" placeholder="השם שיופיע בפרופיל" value={name} onChange={setName} />
-        )}
-        <AuthField label="אימייל" type="email" placeholder="name@example.com" value={email} onChange={setEmail} />
-        <AuthField label="סיסמה" type="password" placeholder="לפחות 8 תווים" value={password} onChange={setPassword} />
-
-        <PrimaryBtn type="submit" size="lg" style={{ width: '100%', justifyContent: 'center', marginTop: 6 }}>
-          {signup ? 'יצירת חשבון' : 'התחברות'}
-        </PrimaryBtn>
-      </form>
-
-      {/* Guest login — debug only, will be removed */}
-      <button className="pg-guest" onClick={onGuest} type="button">
-        המשך כאורח — בלי חשבון
-      </button>
-
-      <div style={{
-        textAlign: 'center', marginTop: 14,
-        fontFamily: 'var(--font-ui)', fontSize: 13.5, color: 'var(--tl-muted)',
-      }}>
-        {signup ? 'כבר יש לכם חשבון? ' : 'עדיין אין חשבון? '}
-        <span
-          style={{ color: 'var(--tl-accent-text)', fontWeight: 600, cursor: 'pointer' }}
-          onClick={onSwitchMode}
-        >
-          {signup ? 'התחברו' : 'הצטרפו'}
-        </span>
-      </div>
     </div>
   )
 }
@@ -131,10 +45,8 @@ function AuthForm({ mode, isMobile, onSwitchMode, onGuest }: AuthFormProps) {
 export function AuthScreen() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
-  const { setToken, isAuthenticated, guestLogin } = useSession()
-  const [mode, setMode] = useState<'signin' | 'signup'>('signin')
+  const { setToken, isAuthenticated } = useSession()
 
-  // Handle token redirect from Google OAuth
   useEffect(() => {
     const urlToken = searchParams.get('token')
     if (urlToken) {
@@ -146,11 +58,6 @@ export function AuthScreen() {
       navigate('/work', { replace: true })
     }
   }, [searchParams, isAuthenticated, setToken, navigate])
-
-  const handleGuest = () => {
-    guestLogin()
-    navigate('/work', { replace: true })
-  }
 
   const isMobile = window.innerWidth < 768
 
@@ -169,12 +76,7 @@ export function AuthScreen() {
           alignItems: 'center', flex: 1,
         }}>
           <div style={{ marginBottom: 28 }}><BrandMark size={30} /></div>
-          <AuthForm
-            mode={mode}
-            isMobile
-            onSwitchMode={() => setMode(m => m === 'signin' ? 'signup' : 'signin')}
-            onGuest={handleGuest}
-          />
+          <AuthForm isMobile />
         </div>
       </div>
     )
@@ -195,11 +97,7 @@ export function AuthScreen() {
       }}>
         <BrandMark size={30} />
         <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <AuthForm
-            mode={mode}
-            onSwitchMode={() => setMode(m => m === 'signin' ? 'signup' : 'signin')}
-            onGuest={handleGuest}
-          />
+          <AuthForm />
         </div>
       </div>
 
@@ -224,7 +122,7 @@ export function AuthScreen() {
             fontFamily: 'var(--font-serif)', fontSize: 24, fontWeight: 500,
             color: '#fff', lineHeight: 1.35,
           }}>
-            כל שורה שתתעתקו נשמרת לחוקרים — ולדורות הבאים.
+            כל שורה עוזרת
           </div>
           <div style={{
             fontFamily: 'var(--font-ui)', fontSize: 14,
