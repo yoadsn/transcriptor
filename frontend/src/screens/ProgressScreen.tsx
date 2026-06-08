@@ -183,7 +183,7 @@ export function ProgressScreen() {
 
   const statsRow = (
     <div style={{ display: 'flex', gap: 12 }}>
-      <StatCard value={fmt(ME.week)} label="שורות השבוע" />
+      <StatCard value={fmt(ME.week)} label="השבוע" />
       <StatCard value={fmt(ME.total)} label="סה״כ שורות" accent="var(--tl-accent-text)" />
       <StatCard value={fmt(ME.pages)} label="עמודים" />
     </div>
@@ -232,7 +232,7 @@ export function ProgressScreen() {
     }}>
       <div>
         <div style={{ fontFamily: 'var(--font-serif)', fontSize: isMobile ? 19 : 22, fontWeight: 500, color: '#fff' }}>
-          להמשיך מאיפה שעצרת
+          ממשיכים מאיפה שעצרת
         </div>
         <div style={{ fontFamily: 'var(--font-ui)', fontSize: 13.5, color: 'rgba(255,255,255,0.82)', marginTop: 3 }}>
           כתב יד פרמא · עמוד 14 · נותרו 3 שורות
@@ -243,7 +243,7 @@ export function ProgressScreen() {
         onClick={() => navigate('/work')}
         style={{ width: isMobile ? '100%' : 'auto', justifyContent: 'center' }}
       >
-        להמשיך לתעתק <Icon name="forward" size={17} color="var(--tl-accent-text)" />
+        המשך לתעתק <Icon name="forward" size={17} color="var(--tl-accent-text)" />
       </button>
     </div>
   )

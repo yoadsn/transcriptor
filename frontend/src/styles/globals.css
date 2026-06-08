@@ -18,6 +18,7 @@
   --tl-success: oklch(0.51 0.095 150);
   --tl-success-fill: oklch(0.91 0.04 150);
   --tl-streak: oklch(0.62 0.13 50);
+  --tl-accent-text: oklch(0.5 0.09 60);
 
   /* Typography */
   --font-serif: "Frank Ruhl Libre", Georgia, serif;

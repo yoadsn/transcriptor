@@ -36,7 +36,7 @@ export function LineStrip({ line, pageDims, imageUrl, role, displayHeight }: Lin
       />
       {role === 'active' && (
         <div className={styles.label}>
-          תעתוק <span dir="ltr">{line.transcription_count}</span> מתוך{' '}
+          תמלול <span dir="ltr">{line.transcription_count}</span> מתוך{' '}
           <span dir="ltr">3</span>
         </div>
       )}

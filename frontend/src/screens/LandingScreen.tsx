@@ -14,9 +14,9 @@ const COMMUNITY_FALLBACK = [
 ]
 
 const HOW_IT_WORKS = [
-  { n: '1', t: 'קוראים את השורה המודגשת',  d: 'כל פעם שורה אחת מתוך כתב היד' },
-  { n: '2', t: 'מקלידים מה שכתוב',          d: 'בדיוק כפי שמופיע: בלי לתקן ובלי לנחש.' },
-  { n: '3', t: 'שולחים וממשיכים',            d: 'וכך מצטברות להן השורות' },
+  { n: '1', t: 'קוראים את השורה המודגשת',  d: 'רואים שורה מתוך כתב יד היסטורי, מודגשת עבורכם.' },
+  { n: '2', t: 'מקלידים מה שכתוב',          d: 'מקלידים בדיוק את מה שמופיע — בלי לתקן ובלי לנחש.' },
+  { n: '3', t: 'שולחים וממשיכים',            d: 'הנתונים נשמרים ועוברים לאימון מודל.' },
 ]
 
 function CommunityStrip({ compact, items }: { compact?: boolean; items: { v: string; l: string }[] }) {
@@ -77,18 +77,22 @@ export function LandingScreen() {
       }}>
         <TopNav compact safeTop={50} />
         <div style={{ padding: '26px 22px 30px' }}>
+          <div style={{
+            fontSize: 12.5, fontWeight: 600,
+            color: 'oklch(0.55 0.1 60)', letterSpacing: '0.04em', marginBottom: 10,
+          }}>תיעוד כתבי יד עבריים</div>
           <h1 style={{
             fontFamily: 'var(--font-serif)',
             fontSize: 33, fontWeight: 500,
             lineHeight: 1.18, color: 'var(--tl-ink)',
             margin: '0 0 14px', textWrap: 'balance',
           } as React.CSSProperties}>
-            יחד נלמד את המחשב לקרוא כתב יד בעברית
+            עוזרים לפענח את העבר, שורה אחת בכל פעם
           </h1>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 26 }}>
             <PrimaryBtn size="lg" onClick={onStart} style={{ width: '100%', justifyContent: 'center' }}>
-              להתחיל לתעתק <Icon name="forward" size={17} color="#fff" />
+              התחל לתעתק <Icon name="forward" size={17} color="#fff" />
             </PrimaryBtn>
             <GhostBtn size="lg" onClick={onLearn} style={{ width: '100%', justifyContent: 'center' }}>
               איך זה עובד
@@ -143,17 +147,27 @@ export function LandingScreen() {
         alignItems: 'center',
       }}>
         <div>
+          <div style={{
+            fontSize: 13.5, fontWeight: 600,
+            color: 'oklch(0.55 0.1 60)', letterSpacing: '0.04em', marginBottom: 14,
+          }}>תיעוד כתבי יד עבריים</div>
           <h1 style={{
             fontFamily: 'var(--font-serif)',
             fontSize: 52, fontWeight: 500,
             lineHeight: 1.14, color: 'var(--tl-ink)',
-            margin: '0 0 28px', textWrap: 'balance',
+            margin: '0 0 18px', textWrap: 'balance',
           } as React.CSSProperties}>
-            יחד נלמד את המחשב לקרוא כתב יד בעברית
+            עוזרים לפענח את העבר, שורה אחת בכל פעם
           </h1>
+          <p style={{
+            fontFamily: 'var(--font-ui)', fontSize: 17, lineHeight: 1.6,
+            color: 'var(--tl-muted)', margin: '0 0 28px', maxWidth: 480,
+          }}>
+            כל שורה שתתעתקו עוזרת ללמד מחשב לקרוא כתב יד עברי. ביחד עם מאות מתנדבים — שורה אחת בכל פעם.
+          </p>
           <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
             <PrimaryBtn size="lg" onClick={onStart}>
-              להתחיל לתעתק <Icon name="forward" size={18} color="#fff" />
+              התחל לתעתק <Icon name="forward" size={18} color="#fff" />
             </PrimaryBtn>
             <GhostBtn size="lg" onClick={onLearn}>איך זה עובד</GhostBtn>
           </div>

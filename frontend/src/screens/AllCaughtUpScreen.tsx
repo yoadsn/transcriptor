@@ -74,14 +74,14 @@ export function AllCaughtUpScreen() {
         fontSize: isMobile ? 30 : 38, fontWeight: 500,
         color: 'var(--tl-ink)', margin: '0 0 12px', lineHeight: 1.15,
       }}>
-        לא עליך המלאכה לגמור :)
+        סיימת את כל מה שזמין
       </h1>
       <p style={{
         fontFamily: 'var(--font-ui)',
         fontSize: isMobile ? 15.5 : 17, color: 'var(--tl-muted)',
         margin: '0 0 30px', lineHeight: 1.6,
       }}>
-        אבל כל השורות תועתקו בינתיים. נוסיף שורות חדשות בקרוב.
+        תועתקו כל השורות הזמינות. נוסיף עוד בקרוב — בינתיים אפשר לעיין בשורות שתרמת.
       </p>
 
       <div style={{
@@ -113,6 +113,18 @@ export function AllCaughtUpScreen() {
           עדכנו אותי במייל
         </button>
       </div>
+
+      <button
+        onClick={() => navigate('/me')}
+        style={{
+          marginTop: 20,
+          fontFamily: 'var(--font-ui)', fontSize: 14, fontWeight: 500,
+          color: 'var(--tl-accent)', background: 'none', border: 'none',
+          cursor: 'pointer', textDecoration: 'underline', textUnderlineOffset: 3,
+        }}
+      >
+        עיון בשורות שתעתקתם
+      </button>
     </div>
   )
 

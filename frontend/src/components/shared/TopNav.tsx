@@ -88,7 +88,7 @@ export function TopNav({ active, compact = false, safeTop = 0 }: TopNavProps) {
               התחברות
             </button>
           )}
-          <PrimaryBtn size="sm" onClick={() => navigate('/work')}>תעתוק</PrimaryBtn>
+          <PrimaryBtn size="sm" onClick={() => navigate('/work')}>התחל</PrimaryBtn>
         </div>
       </div>
     </div>

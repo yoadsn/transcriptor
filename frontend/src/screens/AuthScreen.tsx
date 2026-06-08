@@ -77,12 +77,12 @@ function AuthForm({ mode, isMobile, onSwitchMode, onGuest }: AuthFormProps) {
         color: 'var(--tl-muted)', margin: '0 0 24px', lineHeight: 1.5,
       }}>
         {signup
-          ? 'להתחבר כדי להמשיך מהיכן שעצרת.'
+          ? 'הצטרפו ותרמו לשימור כתבי יד עבריים.'
           : 'להתחבר כדי להמשיך מהיכן שעצרת.'}
       </p>
 
       <button className="pg-oauth" onClick={handleGoogle} type="button">
-        <GoogleMark /> כניסה עם Google
+        <GoogleMark /> המשך עם Google
       </button>
 
       <div style={{
@@ -100,10 +100,10 @@ function AuthForm({ mode, isMobile, onSwitchMode, onGuest }: AuthFormProps) {
           <AuthField label="שם" type="text" placeholder="השם שיופיע בפרופיל" value={name} onChange={setName} />
         )}
         <AuthField label="אימייל" type="email" placeholder="name@example.com" value={email} onChange={setEmail} />
-        <AuthField label="סיסמה" type="password" placeholder="" value={password} onChange={setPassword} />
+        <AuthField label="סיסמה" type="password" placeholder="לפחות 8 תווים" value={password} onChange={setPassword} />
 
         <PrimaryBtn type="submit" size="lg" style={{ width: '100%', justifyContent: 'center', marginTop: 6 }}>
-          {signup ? 'יצירת חשבון' : 'כניסה'}
+          {signup ? 'יצירת חשבון' : 'התחברות'}
         </PrimaryBtn>
       </form>
 
@@ -224,7 +224,7 @@ export function AuthScreen() {
             fontFamily: 'var(--font-serif)', fontSize: 24, fontWeight: 500,
             color: '#fff', lineHeight: 1.35,
           }}>
-            עברים, קראו עברית
+            כל שורה שתתעתקו נשמרת לחוקרים — ולדורות הבאים.
           </div>
           <div style={{
             fontFamily: 'var(--font-ui)', fontSize: 14,

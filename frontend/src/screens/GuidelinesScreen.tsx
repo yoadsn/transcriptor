@@ -76,6 +76,21 @@ function WorkedExample({ width }: { width: number }) {
         width={width}
         spotlight
       />
+      <div style={{
+        display: 'flex', alignItems: 'center', gap: 8, margin: '10px 0 8px',
+        fontFamily: 'var(--font-ui)', fontSize: 12.5, color: 'var(--tl-muted)',
+      }}>
+        <Icon name="forward" size={14} color="var(--tl-muted)" />
+        <span>מקלידים</span>
+      </div>
+      <div style={{
+        fontFamily: 'var(--font-serif)', fontSize: 17, lineHeight: 1.6,
+        color: 'var(--tl-ink)', direction: 'rtl', textAlign: 'right',
+        background: 'var(--tl-page)', border: '0.5px solid var(--tl-border)',
+        borderRadius: 8, padding: '10px 14px',
+      }}>
+        מה שאתם רואים בשורה — בדיוק כך
+      </div>
     </div>
   )
 }
@@ -101,7 +116,7 @@ export function GuidelinesScreen() {
         fontSize: isMobile ? 15 : 17, lineHeight: 1.6,
         color: 'var(--tl-muted)', margin: 0, maxWidth: 540,
       }}>
-        המטרה היא לתעתק באופן שיהיה נאמן למקור – אין צורך לייפות, לתקן או להבהיר. להלן כמה כללים פשוטים שיוכלו לסייע בעניין:
+        מעתיקים בדיוק מה שרואים — אפילו שגיאות כתיב. כמה כללים שיעזרו:
       </p>
     </>
   )
@@ -125,7 +140,7 @@ export function GuidelinesScreen() {
         fontSize: isMobile ? 13.5 : 14.5, color: 'var(--tl-muted)',
         margin: '0 0 16px', lineHeight: 1.5,
       }}>
-        אם השורה לא ניתנת לתעתוק, סמנו את הסיבה לכך והמשיכו.
+        אם השורה לא ניתנת לתעתוק, סמנו את הסיבה לכך והמשיכו. דיווח הוא חלק נורמלי מהעבודה — לא טעות.
       </p>
       <div style={{
         display: 'grid',
@@ -161,7 +176,7 @@ export function GuidelinesScreen() {
           {rulesBlock}
           {flagBlock}
           <PrimaryBtn size="lg" onClick={() => navigate('/work')} style={{ width: '100%', justifyContent: 'center' }}>
-            להתחיל לתעתק <Icon name="forward" size={17} color="#fff" />
+            התחל לתעתק <Icon name="forward" size={17} color="#fff" />
           </PrimaryBtn>
         </div>
       </div>
@@ -184,7 +199,7 @@ export function GuidelinesScreen() {
         {flagBlock}
         <div style={{ marginTop: 40 }}>
           <PrimaryBtn size="lg" onClick={() => navigate('/work')}>
-            להתחיל לתעתק <Icon name="forward" size={18} color="#fff" />
+            התחל לתעתק <Icon name="forward" size={18} color="#fff" />
           </PrimaryBtn>
         </div>
       </div>

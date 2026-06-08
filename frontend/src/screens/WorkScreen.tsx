@@ -60,7 +60,7 @@ function FlagButton({ reasons, onPick }: {
     <div ref={ref} style={{ position: 'relative' }}>
       <button className="tl-flagbtn" onClick={() => setOpen((o) => !o)}>
         <Icon name="flag" size={15} color="var(--tl-muted)" />
-        <span>לא קריא / דיווח / לדגל</span>
+        <span>לא קריא / דיווח</span>
       </button>
       {open && (
         <div style={{
@@ -74,7 +74,7 @@ function FlagButton({ reasons, onPick }: {
           <div style={{
             fontSize: 12, color: 'var(--tl-muted)',
             padding: '6px 10px 4px', fontFamily: 'var(--font-ui)',
-          }}>בחר סיבת דגל</div>
+          }}>מה הבעיה בשורה?</div>
           {reasons.map((r) => (
             <button
               key={r.kind}
@@ -114,10 +114,10 @@ function FinishedOverlay({ daily, done, onContinue }: {
       </div>
       <div>
         <div style={{ fontFamily: 'var(--font-serif)', fontSize: 26, fontWeight: 500, color: 'var(--tl-ink)' }}>
-          סיימתם את העמוד
+          סיימת את העמוד
         </div>
         <div style={{ fontFamily: 'var(--font-ui)', fontSize: 15, color: 'var(--tl-muted)', marginTop: 6 }}>
-          תיעתקתם {done} שורות —{' '}
+          תרמת {done} שורות ·{' '}
           <span style={{ direction: 'ltr', display: 'inline-block' }}>{fmt(daily)}</span> היום
         </div>
       </div>
@@ -156,7 +156,7 @@ function SaveToastBadge({ toast }: { toast: SaveToast | null }) {
         background: isRetry ? 'oklch(0.7 0.09 70)' : 'oklch(0.6 0.08 150)',
         animation: isRetry ? 'tlpulse 1s ease-in-out infinite' : 'none',
       }} />
-      {isRetry ? 'שמירה נכשלה — מנסה שוב.' : 'נשמר ✓'}
+      {isRetry ? 'שמירה נכשלה — מנסה שוב…' : 'נשמר ✓'}
     </div>
   )
 }
@@ -386,7 +386,7 @@ export function WorkScreen() {
         padding: `0 ${sideM}px`, fontFamily: 'var(--font-ui)',
       }}>
         <span style={{ fontSize: 12.5, color: 'var(--tl-muted)' }}>
-          עמוד <span style={{ direction: 'ltr', display: 'inline-block' }}>{page?.page_id ?? ''}</span>
+          עמוד <span style={{ direction: 'ltr', display: 'inline-block' }}>{page?.page_label ?? page?.page_id ?? ''}</span>
         </span>
         <ImmTicks lines={L.lines} cursor={L.cursor} onJump={L.goTo} />
         <span style={{ fontSize: 12.5, fontWeight: 600, color: 'oklch(0.5 0.08 150)' }}>
@@ -443,10 +443,10 @@ export function WorkScreen() {
             color: 'oklch(0.5 0.08 250)',
             background: 'oklch(0.6 0.08 250 / 0.12)',
             padding: '2px 9px', borderRadius: 999,
-          }}>עורכים שורה שלכם</span>
+          }}>עריכת השורה שלך</span>
         ) : (
           <span>
-            תעתוק{' '}
+            תמלול{' '}
             <span style={{ direction: 'ltr', display: 'inline-block' }}>
               {L.current?.transcription_count ?? 0}
             </span>{' '}מתוך{' '}
@@ -461,7 +461,7 @@ export function WorkScreen() {
         dir="rtl"
         lang="he"
         value={L.input}
-        placeholder="העתיקו כאן את הטקסט הכתוב בשורה המסומנת."
+        placeholder="הקלד את הטקסט של השורה המודגשת…"
         onChange={(e) => L.setInput(e.target.value)}
         onKeyDown={onKeyDown}
         rows={1}
@@ -483,7 +483,7 @@ export function WorkScreen() {
           onClick={L.submit}
           disabled={!L.input.trim()}
         >
-          <span>{L.editing ? 'שמור עריכה' : 'שלח שורה'}</span>
+          <span>{L.editing ? 'עדכן והמשך' : 'שלח והמשך'}</span>
           <Icon name="forward" size={16} color="#fff" />
           <span className="tl-kbd">Enter</span>
         </button>

@@ -22,6 +22,7 @@ export interface SessionDTO {
   width_px: number
   height_px: number
   lines: SessionLine[]
+  page_label?: number
 }
 
 export type FlagKind = 'cant_read' | 'bad_crop' | 'not_hebrew' | 'not_text'

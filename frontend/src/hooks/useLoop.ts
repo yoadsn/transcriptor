@@ -20,6 +20,7 @@ export interface LoopPage {
   image_url: string
   width_px: number
   height_px: number
+  page_label?: number
 }
 
 export type SaveToastKind = 'retry' | 'error'
@@ -32,10 +33,10 @@ interface SaveItem {
 }
 
 export const FLAG_REASONS: { kind: FlagKind; label: string }[] = [
-  { kind: 'bad_crop',   label: 'חיתוך גרוע'       },
-  { kind: 'not_hebrew', label: 'לא עברית'          },
-  { kind: 'not_text',   label: 'לא טקסט'           },
-  { kind: 'cant_read',  label: 'לא ניתן לקרוא'     },
+  { kind: 'bad_crop',   label: 'תמונה חתוכה'       },
+  { kind: 'not_hebrew', label: 'לא עברית'           },
+  { kind: 'not_text',   label: 'לא טקסט'            },
+  { kind: 'cant_read',  label: 'לא מצליח לקרוא'    },
 ]
 
 function linesFromDTO(dto: SessionDTO): LoopLine[] {
@@ -155,7 +156,7 @@ export function useLoop(): LoopState {
         return
       }
       const loaded = linesFromDTO(dto)
-      setPage({ page_id: dto.page_id, image_url: dto.image_url, width_px: dto.width_px, height_px: dto.height_px })
+      setPage({ page_id: dto.page_id, image_url: dto.image_url, width_px: dto.width_px, height_px: dto.height_px, page_label: dto.page_label })
       setLines(loaded)
       setCursor(firstEligibleIdx(loaded))
       setEligibleTotal(countEligible(loaded))
