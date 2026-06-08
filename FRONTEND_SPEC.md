@@ -137,7 +137,7 @@ Top→bottom, mirroring reading order, minimizing eye travel between handwriting
 │  ┌─ current line ──────────────────────────┐   │  ← active image strip, large, 2px ring
 │  │  (handwriting image, cropped via bbox)   │   │
 │  └──────────────────────────────────────────┘   │
-│     "תמלול 2 מתוך 3"  (transcription 2 of 3)     │  ← per-line progress (see §4.6)
+│     "תעתוק 2 מתוך 3"  (transcription 2 of 3)     │  ← per-line progress (see §4.6)
 │                                                 │
 │  ┌─ input ───────────────────────────────────┐  │  ← RTL textarea, serif, DIRECTLY below
 │  │  הקלד את הטקסט כאן…                         │  │     the current image (least eye travel)
@@ -221,7 +221,7 @@ doesn't compete with submit and doesn't invite lazy flagging, but instantly reac
 
 ### 4.6 Per-line transcription count (decision: SHOW, framed for motivation)
 
-Show "תמלול N מתוך 3" (transcription N of 3) on the active line as **forward progress**.
+Show "תעתוק N מתוך 3" (transcription N of 3) on the active line as **forward progress**.
 Rules that protect transcription independence (do not violate):
 - Never reveal *what* anyone else typed. Only the count.
 - Never visually de-emphasize a near-complete line or imply "someone else will handle it" — a
@@ -304,7 +304,7 @@ already paused.
   לעמוד הבא" (continue to next page) that fetches the next session and returns to `/work`. Keep
   it quick; a dedicated volunteer wants to keep going, not admire a confetti screen. One small
   affirmation, then onward.
-- **Nothing left (`204` from next-session):** "אין כרגע שורות לתמלול — תודה!" (no lines to
+- **Nothing left (`204` from next-session):** "אין כרגע שורות לתעתוק — תודה!" (no lines to
   transcribe right now — thank you!) with a link to `/me`. This is success, not an error.
 
 ### Auto-advance vs. pause — DECISION NEEDED

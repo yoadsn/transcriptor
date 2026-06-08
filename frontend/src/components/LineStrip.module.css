@@ -35,10 +35,6 @@
 
 @media (max-width: 768px) {
   .strip {
-    width: 100% !important;
-  }
-
-  .image {
-    width: 100% !important;
+    max-width: 100%;
   }
 }

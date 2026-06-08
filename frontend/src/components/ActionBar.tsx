@@ -23,7 +23,7 @@ export function ActionBar({ onSubmit, onFlagOpen, canSubmit }: ActionBarProps) {
         className={styles.submitBtn}
         onClick={onSubmit}
         disabled={!canSubmit}
-        aria-label="שלח תמלול והמשך לשורה הבאה"
+        aria-label="שלח תעתוק והמשך לשורה הבאה"
       >
         שלח והמשך ←
       </button>

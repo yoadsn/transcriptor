@@ -1,13 +1,13 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { SessionProvider } from './contexts/SessionContext'
 import { AuthGuard } from './guards/AuthGuard'
-import { ConsentGuard } from './guards/ConsentGuard'
 import { ErrorBoundary } from './components/ErrorBoundary'
-import { LoginScreen } from './screens/LoginScreen'
-import { ConsentScreen } from './screens/ConsentScreen'
+import { LandingScreen } from './screens/LandingScreen'
+import { AuthScreen } from './screens/AuthScreen'
+import { GuidelinesScreen } from './screens/GuidelinesScreen'
 import { WorkScreen } from './screens/WorkScreen'
-import { DoneScreen } from './screens/DoneScreen'
-import { MeScreen } from './screens/MeScreen'
+import { AllCaughtUpScreen } from './screens/AllCaughtUpScreen'
+import { ProgressScreen } from './screens/ProgressScreen'
 
 export default function App() {
   return (
@@ -15,51 +15,19 @@ export default function App() {
       <SessionProvider>
         <BrowserRouter>
           <Routes>
-            <Route path="/login" element={<LoginScreen />} />
+            {/* Public */}
+            <Route path="/" element={<LandingScreen />} />
+            <Route path="/auth" element={<AuthScreen />} />
+            {/* /login kept as alias for old OAuth redirect */}
+            <Route path="/login" element={<AuthScreen />} />
+            <Route path="/guidelines" element={<GuidelinesScreen />} />
 
-            <Route
-              path="/consent"
-              element={
-                <AuthGuard>
-                  <ConsentScreen />
-                </AuthGuard>
-              }
-            />
+            {/* Protected */}
+            <Route path="/work" element={<AuthGuard><WorkScreen /></AuthGuard>} />
+            <Route path="/done" element={<AuthGuard><AllCaughtUpScreen /></AuthGuard>} />
+            <Route path="/me" element={<AuthGuard><ProgressScreen /></AuthGuard>} />
 
-            <Route
-              path="/work"
-              element={
-                <AuthGuard>
-                  <ConsentGuard>
-                    <WorkScreen />
-                  </ConsentGuard>
-                </AuthGuard>
-              }
-            />
-
-            <Route
-              path="/done"
-              element={
-                <AuthGuard>
-                  <ConsentGuard>
-                    <DoneScreen />
-                  </ConsentGuard>
-                </AuthGuard>
-              }
-            />
-
-            <Route
-              path="/me"
-              element={
-                <AuthGuard>
-                  <ConsentGuard>
-                    <MeScreen />
-                  </ConsentGuard>
-                </AuthGuard>
-              }
-            />
-
-            <Route path="*" element={<Navigate to="/work" replace />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </BrowserRouter>
       </SessionProvider>

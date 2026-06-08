@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from app.api.routes import consent, leaderboard, progress, session, transcription
+from app.api.routes import community, consent, leaderboard, progress, session, transcription
 from app.config import settings
 
 app = FastAPI(title="Transcriptor")
@@ -21,6 +21,7 @@ if settings.dev_mode:
     if _data_dir.exists():
         app.mount("/images", StaticFiles(directory=str(_data_dir)), name="images")
 
+app.include_router(community.router, prefix="/api")
 app.include_router(session.router, prefix="/api")
 app.include_router(transcription.router, prefix="/api")
 app.include_router(consent.router, prefix="/api")

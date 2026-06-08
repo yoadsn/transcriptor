@@ -1,0 +1,569 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="3000" height="3000" viewBox="0 0 3000 3000" xmlns="http://www.w3.org/2000/svg" font-family="'Segoe UI', Arial, sans-serif">
+
+  <!-- Background -->
+  <rect width="3000" height="3000" fill="#0d1117"/>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="arr-blue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#3b82f6"/>
+    </marker>
+    <marker id="arr-green" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#22c55e"/>
+    </marker>
+    <marker id="arr-orange" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#f97316"/>
+    </marker>
+    <marker id="arr-red" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#ef4444"/>
+    </marker>
+    <marker id="arr-gray" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#4b5563"/>
+    </marker>
+    <!-- Gradients -->
+    <linearGradient id="g-title" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#1d4ed8"/>
+      <stop offset="50%" stop-color="#7c3aed"/>
+      <stop offset="100%" stop-color="#0891b2"/>
+    </linearGradient>
+    <linearGradient id="g-client" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="g-api" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1e3a5f"/>
+      <stop offset="100%" stop-color="#0a1628"/>
+    </linearGradient>
+    <linearGradient id="g-db" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#2d1b69"/>
+      <stop offset="100%" stop-color="#0d0a1e"/>
+    </linearGradient>
+    <linearGradient id="g-ext" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1c1917"/>
+      <stop offset="100%" stop-color="#0d1117"/>
+    </linearGradient>
+    <!-- Shadows -->
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="6" stdDeviation="16" flood-color="#000" flood-opacity="0.7"/>
+    </filter>
+    <filter id="shadow-sm">
+      <feDropShadow dx="0" dy="3" stdDeviation="8" flood-color="#000" flood-opacity="0.5"/>
+    </filter>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- TITLE BAR -->
+  <!-- ══════════════════════════════════════════════ -->
+  <rect x="0" y="0" width="3000" height="130" fill="#0d1117"/>
+  <rect x="200" y="38" width="2600" height="6" rx="3" fill="url(#g-title)" opacity="0.6"/>
+  <text x="1500" y="86" text-anchor="middle" fill="#f1f5f9" font-size="62" font-weight="800" letter-spacing="3">Transcriptor</text>
+  <text x="1500" y="118" text-anchor="middle" fill="#475569" font-size="26" letter-spacing="8">BACKEND ARCHITECTURE</text>
+
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- LAYER 1 — CLIENT -->
+  <!-- ══════════════════════════════════════════════ -->
+  <rect x="150" y="160" width="2700" height="200" rx="20" fill="url(#g-client)" stroke="#334155" stroke-width="2" filter="url(#shadow-sm)"/>
+  <text x="1500" y="215" text-anchor="middle" fill="#64748b" font-size="20" font-weight="700" letter-spacing="6">CLIENT LAYER</text>
+
+  <!-- React SPA -->
+  <rect x="450" y="232" width="460" height="100" rx="14" fill="#0f172a" stroke="#3b82f6" stroke-width="2" filter="url(#shadow-sm)"/>
+  <text x="680" y="272" text-anchor="middle" fill="#60a5fd" font-size="28" font-weight="700">React SPA</text>
+  <text x="680" y="306" text-anchor="middle" fill="#475569" font-size="20">Vite · localhost:5173</text>
+
+  <!-- Admin / Scripts -->
+  <rect x="1050" y="232" width="460" height="100" rx="14" fill="#0f172a" stroke="#475569" stroke-width="2" filter="url(#shadow-sm)"/>
+  <text x="1280" y="272" text-anchor="middle" fill="#94a3b8" font-size="28" font-weight="700">Admin Scripts</text>
+  <text x="1280" y="306" text-anchor="middle" fill="#475569" font-size="20">Import · Export CLI</text>
+
+  <!-- Test Suite -->
+  <rect x="1650" y="232" width="460" height="100" rx="14" fill="#0f172a" stroke="#475569" stroke-width="2" filter="url(#shadow-sm)"/>
+  <text x="1880" y="272" text-anchor="middle" fill="#94a3b8" font-size="28" font-weight="700">Test Suite</text>
+  <text x="1880" y="306" text-anchor="middle" fill="#475569" font-size="20">pytest · httpx · real DB</text>
+
+  <!-- Arrow label -->
+  <text x="2500" y="272" fill="#1e3a5f" font-size="20" font-style="italic">HTTP / REST</text>
+  <text x="2500" y="298" fill="#1e3a5f" font-size="20" font-style="italic">Bearer Token</text>
+
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- CONNECTOR: Client → FastAPI -->
+  <!-- ══════════════════════════════════════════════ -->
+  <line x1="1500" y1="360" x2="1500" y2="420" stroke="#3b82f6" stroke-width="3" marker-end="url(#arr-blue)"/>
+  <text x="1540" y="400" fill="#3b82f6" font-size="18" font-style="italic">/api/*</text>
+
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- LAYER 2 — FASTAPI -->
+  <!-- ══════════════════════════════════════════════ -->
+  <rect x="150" y="430" width="2700" height="820" rx="20" fill="url(#g-api)" stroke="#1d4ed8" stroke-width="2.5" filter="url(#shadow)"/>
+
+  <!-- Header band -->
+  <rect x="150" y="430" width="2700" height="72" rx="20" fill="#1d4ed8" opacity="0.35"/>
+  <rect x="150" y="484" width="2700" height="18" fill="#1d4ed8" opacity="0.35"/>
+  <text x="1500" y="477" text-anchor="middle" fill="#93c5fd" font-size="34" font-weight="800" letter-spacing="4">FastAPI Application  ·  uvicorn  ·  :8000</text>
+
+  <!-- ── Sub-row A: Middleware ── -->
+  <rect x="210" y="516" width="2580" height="60" rx="10" fill="#060e1e" stroke="#1e3a5f" stroke-width="1.5"/>
+  <text x="380" y="546" text-anchor="middle" fill="#334155" font-size="17" font-weight="700">MIDDLEWARE</text>
+  <line x1="470" y1="516" x2="470" y2="576" stroke="#1e3a5f" stroke-width="1.5"/>
+  <text x="700" y="546" text-anchor="middle" fill="#60a5fa" font-size="19">CORS (dev)</text>
+  <line x1="870" y1="516" x2="870" y2="576" stroke="#1e3a5f" stroke-width="1.5"/>
+  <text x="1110" y="546" text-anchor="middle" fill="#60a5fa" font-size="19">StaticFiles /images</text>
+  <line x1="1330" y1="516" x2="1330" y2="576" stroke="#1e3a5f" stroke-width="1.5"/>
+  <text x="1570" y="546" text-anchor="middle" fill="#60a5fa" font-size="19">DB Session per Request</text>
+  <line x1="1820" y1="516" x2="1820" y2="576" stroke="#1e3a5f" stroke-width="1.5"/>
+  <text x="2050" y="546" text-anchor="middle" fill="#60a5fa" font-size="19">HTTP 401/403/422 Errors</text>
+  <line x1="2280" y1="516" x2="2280" y2="576" stroke="#1e3a5f" stroke-width="1.5"/>
+  <text x="2530" y="546" text-anchor="middle" fill="#334155" font-size="17">pydantic-settings / .env</text>
+
+  <!-- ── Sub-row B: Routes ── -->
+  <text x="240" y="628" fill="#93c5fd" font-size="22" font-weight="700" letter-spacing="3">ROUTES</text>
+
+  <!-- Route pill helper macro: 6 routes -->
+  <!-- GET /health -->
+  <rect x="210" y="640" width="380" height="110" rx="12" fill="#060e1e" stroke="#334155" stroke-width="1.5" filter="url(#shadow-sm)"/>
+  <rect x="210" y="640" width="380" height="38" rx="12" fill="#1e293b"/>
+  <rect x="210" y="662" width="380" height="16" fill="#1e293b"/>
+  <text x="260" y="666" fill="#64748b" font-size="18" font-weight="800">GET</text>
+  <text x="315" y="666" fill="#93c5fd" font-size="20" font-weight="700">/health</text>
+  <text x="400" y="700" text-anchor="middle" fill="#475569" font-size="17">{ status: "ok" }</text>
+  <text x="400" y="726" text-anchor="middle" fill="#334155" font-size="16">No auth</text>
+
+  <!-- GET /next-session -->
+  <rect x="620" y="640" width="380" height="110" rx="12" fill="#060e1e" stroke="#334155" stroke-width="1.5" filter="url(#shadow-sm)"/>
+  <rect x="620" y="640" width="380" height="38" rx="12" fill="#1e293b"/>
+  <rect x="620" y="662" width="380" height="16" fill="#1e293b"/>
+  <text x="670" y="666" fill="#22c55e" font-size="18" font-weight="800">GET</text>
+  <text x="730" y="666" fill="#93c5fd" font-size="20" font-weight="700">/next-session</text>
+  <text x="810" y="700" text-anchor="middle" fill="#475569" font-size="17">SessionDTO | 204</text>
+  <text x="810" y="726" text-anchor="middle" fill="#334155" font-size="16">🔒 consent</text>
+
+  <!-- POST /lines/{id}/response -->
+  <rect x="1030" y="640" width="460" height="110" rx="12" fill="#060e1e" stroke="#334155" stroke-width="1.5" filter="url(#shadow-sm)"/>
+  <rect x="1030" y="640" width="460" height="38" rx="12" fill="#1e293b"/>
+  <rect x="1030" y="662" width="460" height="16" fill="#1e293b"/>
+  <text x="1080" y="666" fill="#f97316" font-size="18" font-weight="800">POST</text>
+  <text x="1155" y="666" fill="#93c5fd" font-size="20" font-weight="700">/lines/{id}/response</text>
+  <text x="1260" y="700" text-anchor="middle" fill="#475569" font-size="17">Submit text | flag</text>
+  <text x="1260" y="726" text-anchor="middle" fill="#334155" font-size="16">🔒 consent</text>
+
+  <!-- POST /consent -->
+  <rect x="1520" y="640" width="360" height="110" rx="12" fill="#060e1e" stroke="#334155" stroke-width="1.5" filter="url(#shadow-sm)"/>
+  <rect x="1520" y="640" width="360" height="38" rx="12" fill="#1e293b"/>
+  <rect x="1520" y="662" width="360" height="16" fill="#1e293b"/>
+  <text x="1570" y="666" fill="#f97316" font-size="18" font-weight="800">POST</text>
+  <text x="1640" y="666" fill="#93c5fd" font-size="20" font-weight="700">/consent</text>
+  <text x="1700" y="700" text-anchor="middle" fill="#475569" font-size="17">Record consent</text>
+  <text x="1700" y="726" text-anchor="middle" fill="#334155" font-size="16">🔒 user</text>
+
+  <!-- GET /me/progress -->
+  <rect x="1910" y="640" width="360" height="110" rx="12" fill="#060e1e" stroke="#334155" stroke-width="1.5" filter="url(#shadow-sm)"/>
+  <rect x="1910" y="640" width="360" height="38" rx="12" fill="#1e293b"/>
+  <rect x="1910" y="662" width="360" height="16" fill="#1e293b"/>
+  <text x="1960" y="666" fill="#22c55e" font-size="18" font-weight="800">GET</text>
+  <text x="2015" y="666" fill="#93c5fd" font-size="20" font-weight="700">/me/progress</text>
+  <text x="2090" y="700" text-anchor="middle" fill="#475569" font-size="17">tx count</text>
+  <text x="2090" y="726" text-anchor="middle" fill="#334155" font-size="16">🔒 user</text>
+
+  <!-- GET /leaderboard -->
+  <rect x="2300" y="640" width="370" height="110" rx="12" fill="#060e1e" stroke="#334155" stroke-width="1.5" filter="url(#shadow-sm)"/>
+  <rect x="2300" y="640" width="370" height="38" rx="12" fill="#1e293b"/>
+  <rect x="2300" y="662" width="370" height="16" fill="#1e293b"/>
+  <text x="2350" y="666" fill="#22c55e" font-size="18" font-weight="800">GET</text>
+  <text x="2415" y="666" fill="#93c5fd" font-size="20" font-weight="700">/leaderboard</text>
+  <text x="2485" y="700" text-anchor="middle" fill="#475569" font-size="17">Top 100  (60s cache)</text>
+  <text x="2485" y="726" text-anchor="middle" fill="#334155" font-size="16">No auth</text>
+
+
+  <!-- ── Sub-row C: Services ── -->
+  <text x="240" y="806" fill="#93c5fd" font-size="22" font-weight="700" letter-spacing="3">SERVICES</text>
+
+  <!-- dispatch.py -->
+  <rect x="210" y="818" width="380" height="200" rx="12" fill="#030b1a" stroke="#1d4ed8" stroke-width="2" filter="url(#shadow-sm)"/>
+  <rect x="210" y="818" width="380" height="42" rx="12" fill="#1e3a5f"/>
+  <rect x="210" y="844" width="380" height="16" fill="#1e3a5f"/>
+  <text x="400" y="847" text-anchor="middle" fill="#60a5fa" font-size="22" font-weight="700">dispatch.py</text>
+  <text x="400" y="882" text-anchor="middle" fill="#94a3b8" font-size="18">get_next_session()</text>
+  <text x="230" y="914" fill="#475569" font-size="17">▸ Pick page w/ most eligible lines</text>
+  <text x="230" y="940" fill="#475569" font-size="17">▸ Prefer lowest transcription_count</text>
+  <text x="230" y="966" fill="#475569" font-size="17">▸ Mark: eligible / full / done_by_you</text>
+  <text x="230" y="992" fill="#475569" font-size="17">▸ Order by line_index (reading order)</text>
+
+  <!-- transcriptions.py -->
+  <rect x="620" y="818" width="420" height="200" rx="12" fill="#030b1a" stroke="#1d4ed8" stroke-width="2" filter="url(#shadow-sm)"/>
+  <rect x="620" y="818" width="420" height="42" rx="12" fill="#1e3a5f"/>
+  <rect x="620" y="844" width="420" height="16" fill="#1e3a5f"/>
+  <text x="830" y="847" text-anchor="middle" fill="#60a5fa" font-size="22" font-weight="700">transcriptions.py</text>
+  <text x="830" y="882" text-anchor="middle" fill="#94a3b8" font-size="18">submit_response()</text>
+  <text x="645" y="914" fill="#475569" font-size="17">▸ Validate kind / text pairing</text>
+  <text x="645" y="940" fill="#475569" font-size="17">▸ UPSERT (line_id, user_id)</text>
+  <text x="645" y="966" fill="#475569" font-size="17">▸ Increment count on first only</text>
+  <text x="645" y="992" fill="#475569" font-size="17">▸ Append event row (audit log)</text>
+
+  <!-- consent.py -->
+  <rect x="1070" y="818" width="360" height="200" rx="12" fill="#030b1a" stroke="#1d4ed8" stroke-width="2" filter="url(#shadow-sm)"/>
+  <rect x="1070" y="818" width="360" height="42" rx="12" fill="#1e3a5f"/>
+  <rect x="1070" y="844" width="360" height="16" fill="#1e3a5f"/>
+  <text x="1250" y="847" text-anchor="middle" fill="#60a5fa" font-size="22" font-weight="700">consent.py</text>
+  <text x="1250" y="882" text-anchor="middle" fill="#94a3b8" font-size="18">record / has_consent()</text>
+  <text x="1095" y="914" fill="#475569" font-size="17">▸ Append-only insert</text>
+  <text x="1095" y="940" fill="#475569" font-size="17">▸ Version-gated re-consent</text>
+  <text x="1095" y="966" fill="#475569" font-size="17">▸ Types: license | telemetry</text>
+
+  <!-- users.py -->
+  <rect x="1460" y="818" width="340" height="200" rx="12" fill="#030b1a" stroke="#1d4ed8" stroke-width="2" filter="url(#shadow-sm)"/>
+  <rect x="1460" y="818" width="340" height="42" rx="12" fill="#1e3a5f"/>
+  <rect x="1460" y="844" width="340" height="16" fill="#1e3a5f"/>
+  <text x="1630" y="847" text-anchor="middle" fill="#60a5fa" font-size="22" font-weight="700">users.py</text>
+  <text x="1630" y="882" text-anchor="middle" fill="#94a3b8" font-size="18">get_or_create_user()</text>
+  <text x="1483" y="914" fill="#475569" font-size="17">▸ Idempotent on google_sub</text>
+  <text x="1483" y="940" fill="#475569" font-size="17">▸ Called from auth dep</text>
+  <text x="1483" y="966" fill="#475569" font-size="17">▸ First-login user creation</text>
+
+  <!-- leaderboard.py -->
+  <rect x="1830" y="818" width="360" height="200" rx="12" fill="#030b1a" stroke="#1d4ed8" stroke-width="2" filter="url(#shadow-sm)"/>
+  <rect x="1830" y="818" width="360" height="42" rx="12" fill="#1e3a5f"/>
+  <rect x="1830" y="844" width="360" height="16" fill="#1e3a5f"/>
+  <text x="2010" y="847" text-anchor="middle" fill="#60a5fa" font-size="22" font-weight="700">leaderboard.py</text>
+  <text x="2010" y="882" text-anchor="middle" fill="#94a3b8" font-size="18">get_leaderboard()</text>
+  <text x="1855" y="914" fill="#475569" font-size="17">▸ Top 100 text submitters</text>
+  <text x="1855" y="940" fill="#475569" font-size="17">▸ Excludes flag-only users</text>
+  <text x="1855" y="966" fill="#475569" font-size="17">▸ 60s in-memory cache</text>
+
+  <!-- rules.py -->
+  <rect x="2220" y="818" width="440" height="200" rx="12" fill="#030b1a" stroke="#334155" stroke-width="1.5" filter="url(#shadow-sm)"/>
+  <rect x="2220" y="818" width="440" height="42" rx="12" fill="#1e293b"/>
+  <rect x="2220" y="844" width="440" height="16" fill="#1e293b"/>
+  <text x="2440" y="847" text-anchor="middle" fill="#64748b" font-size="22" font-weight="700">rules.py  (pure logic)</text>
+  <text x="2440" y="882" text-anchor="middle" fill="#475569" font-size="18">no DB imports</text>
+  <text x="2245" y="914" fill="#475569" font-size="17">▸ is_line_eligible_for_user()</text>
+  <text x="2245" y="940" fill="#475569" font-size="17">▸ should_increment_count()</text>
+  <text x="2245" y="966" fill="#475569" font-size="17">▸ mint_line_external_id() SHA256</text>
+  <text x="2245" y="992" fill="#475569" font-size="17">▸ order_session_lines()</text>
+
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- CONNECTOR: FastAPI → DB + External (below) -->
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- Down arrow to DB -->
+  <line x1="1100" y1="1250" x2="1100" y2="1330" stroke="#22c55e" stroke-width="3" marker-end="url(#arr-green)"/>
+  <text x="1120" y="1298" fill="#22c55e" font-size="18" font-style="italic">SQLAlchemy ORM</text>
+
+  <!-- Right arrow to External -->
+  <line x1="2850" y1="900" x2="2920" y2="900" stroke="#94a3b8" stroke-width="2.5" marker-end="url(#arr-gray)"/>
+  <line x1="2920" y1="900" x2="2920" y2="1360" stroke="#94a3b8" stroke-width="2.5"/>
+  <line x1="2920" y1="1360" x2="2850" y2="1360" stroke="#94a3b8" stroke-width="2.5" marker-end="url(#arr-gray)"/>
+
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- LAYER 3 — DATABASE  (left 2/3) -->
+  <!-- ══════════════════════════════════════════════ -->
+  <rect x="150" y="1340" width="2100" height="860" rx="20" fill="url(#g-db)" stroke="#7c3aed" stroke-width="2.5" filter="url(#shadow)"/>
+
+  <!-- Header -->
+  <rect x="150" y="1340" width="2100" height="72" rx="20" fill="#7c3aed" opacity="0.4"/>
+  <rect x="150" y="1394" width="2100" height="18" fill="#7c3aed" opacity="0.4"/>
+  <text x="1200" y="1390" text-anchor="middle" fill="#c4b5fd" font-size="34" font-weight="800" letter-spacing="4">PostgreSQL  ·  SQLAlchemy 2.0  ·  Alembic</text>
+
+  <!-- Table cards — top row -->
+  <!-- batches -->
+  <rect x="210" y="1430" width="340" height="320" rx="12" fill="#0d0a1e" stroke="#7c3aed" stroke-width="1.5" filter="url(#shadow-sm)"/>
+  <rect x="210" y="1430" width="340" height="46" rx="12" fill="#4c1d95"/>
+  <rect x="210" y="1460" width="340" height="16" fill="#4c1d95"/>
+  <text x="380" y="1461" text-anchor="middle" fill="#ddd6fe" font-size="24" font-weight="700">batches</text>
+  <text x="235" y="1500" fill="#7c3aed" font-size="18" font-weight="700">id</text><text x="380" y="1500" fill="#475569" font-size="17">UUID PK</text>
+  <text x="235" y="1530" fill="#94a3b8" font-size="17">external_id</text><text x="380" y="1530" fill="#475569" font-size="17">UNIQUE</text>
+  <text x="235" y="1560" fill="#94a3b8" font-size="17">source</text>
+  <text x="235" y="1590" fill="#94a3b8" font-size="17">license</text>
+  <text x="235" y="1620" fill="#94a3b8" font-size="17">created_at</text>
+  <line x1="235" y1="1634" x2="530" y2="1634" stroke="#2d1b69" stroke-width="1"/>
+  <text x="380" y="1660" text-anchor="middle" fill="#374151" font-size="16" font-style="italic">Provenance origin</text>
+  <text x="380" y="1684" text-anchor="middle" fill="#374151" font-size="16" font-style="italic">archive + license</text>
+  <text x="380" y="1708" text-anchor="middle" fill="#374151" font-size="16" font-style="italic">1:N → pages</text>
+
+  <!-- FK arrow batches → pages -->
+  <line x1="550" y1="1590" x2="590" y2="1590" stroke="#6d28d9" stroke-width="2" marker-end="url(#arr-gray)"/>
+
+  <!-- pages -->
+  <rect x="590" y="1430" width="360" height="320" rx="12" fill="#0d0a1e" stroke="#7c3aed" stroke-width="1.5" filter="url(#shadow-sm)"/>
+  <rect x="590" y="1430" width="360" height="46" rx="12" fill="#4c1d95"/>
+  <rect x="590" y="1460" width="360" height="16" fill="#4c1d95"/>
+  <text x="770" y="1461" text-anchor="middle" fill="#ddd6fe" font-size="24" font-weight="700">pages</text>
+  <text x="615" y="1500" fill="#7c3aed" font-size="18" font-weight="700">id</text><text x="760" y="1500" fill="#475569" font-size="17">UUID PK</text>
+  <text x="615" y="1530" fill="#f97316" font-size="17">batch_id</text><text x="760" y="1530" fill="#475569" font-size="17">FK→batches</text>
+  <text x="615" y="1560" fill="#94a3b8" font-size="17">external_id</text>
+  <text x="615" y="1590" fill="#94a3b8" font-size="17">image_path</text>
+  <text x="615" y="1620" fill="#94a3b8" font-size="17">width_px / height_px</text>
+  <line x1="615" y1="1634" x2="930" y2="1634" stroke="#2d1b69" stroke-width="1"/>
+  <text x="770" y="1660" text-anchor="middle" fill="#374151" font-size="16" font-style="italic">Surya source page</text>
+  <text x="770" y="1684" text-anchor="middle" fill="#374151" font-size="16" font-style="italic">UNIQUE(batch_id, ext_id)</text>
+  <text x="770" y="1708" text-anchor="middle" fill="#374151" font-size="16" font-style="italic">1:N → lines</text>
+
+  <!-- FK arrow pages → lines -->
+  <line x1="950" y1="1590" x2="990" y2="1590" stroke="#6d28d9" stroke-width="2" marker-end="url(#arr-gray)"/>
+
+  <!-- lines -->
+  <rect x="990" y="1430" width="400" height="320" rx="12" fill="#0d0a1e" stroke="#22c55e" stroke-width="2.5" filter="url(#shadow-sm)"/>
+  <rect x="990" y="1430" width="400" height="46" rx="12" fill="#14532d"/>
+  <rect x="990" y="1460" width="400" height="16" fill="#14532d"/>
+  <text x="1190" y="1461" text-anchor="middle" fill="#86efac" font-size="24" font-weight="700">lines  ⭐</text>
+  <text x="1015" y="1500" fill="#7c3aed" font-size="18" font-weight="700">id</text><text x="1160" y="1500" fill="#475569" font-size="17">UUID PK</text>
+  <text x="1015" y="1530" fill="#f97316" font-size="17">page_id</text><text x="1160" y="1530" fill="#475569" font-size="17">FK→pages</text>
+  <text x="1015" y="1560" fill="#94a3b8" font-size="17">line_index</text><text x="1160" y="1560" fill="#475569" font-size="17">reading order</text>
+  <text x="1015" y="1590" fill="#94a3b8" font-size="17">bbox</text><text x="1160" y="1590" fill="#475569" font-size="17">JSONB {x,y,w,h}</text>
+  <text x="1015" y="1620" fill="#22c55e" font-size="17" font-weight="700">transcription_count</text>
+  <line x1="1015" y1="1634" x2="1370" y2="1634" stroke="#145d30" stroke-width="1"/>
+  <text x="1190" y="1660" text-anchor="middle" fill="#374151" font-size="16" font-style="italic">Cached counter (0–N)</text>
+  <text x="1190" y="1684" text-anchor="middle" fill="#374151" font-size="16" font-style="italic">IDX(page_id, count) → dispatch</text>
+  <text x="1190" y="1708" text-anchor="middle" fill="#374151" font-size="16" font-style="italic">1:N → transcriptions</text>
+
+  <!-- users -->
+  <rect x="1430" y="1430" width="380" height="320" rx="12" fill="#0d0a1e" stroke="#7c3aed" stroke-width="1.5" filter="url(#shadow-sm)"/>
+  <rect x="1430" y="1430" width="380" height="46" rx="12" fill="#4c1d95"/>
+  <rect x="1430" y="1460" width="380" height="16" fill="#4c1d95"/>
+  <text x="1620" y="1461" text-anchor="middle" fill="#ddd6fe" font-size="24" font-weight="700">users</text>
+  <text x="1455" y="1500" fill="#7c3aed" font-size="18" font-weight="700">id</text><text x="1600" y="1500" fill="#475569" font-size="17">UUID PK</text>
+  <text x="1455" y="1530" fill="#94a3b8" font-size="17">google_sub</text><text x="1600" y="1530" fill="#22c55e" font-size="17">UNIQUE</text>
+  <text x="1455" y="1560" fill="#94a3b8" font-size="17">email / display_name</text>
+  <text x="1455" y="1590" fill="#94a3b8" font-size="17">show_on_leaderboard</text>
+  <text x="1455" y="1620" fill="#94a3b8" font-size="17">created_at</text>
+  <line x1="1455" y1="1634" x2="1790" y2="1634" stroke="#2d1b69" stroke-width="1"/>
+  <text x="1620" y="1660" text-anchor="middle" fill="#374151" font-size="16" font-style="italic">Google OIDC identity</text>
+  <text x="1620" y="1684" text-anchor="middle" fill="#374151" font-size="16" font-style="italic">1:N → tx, consents, events</text>
+
+  <!-- Table cards — bottom row -->
+  <!-- transcriptions -->
+  <rect x="210" y="1780" width="680" height="380" rx="12" fill="#0d0a1e" stroke="#22c55e" stroke-width="2.5" filter="url(#shadow-sm)"/>
+  <rect x="210" y="1780" width="680" height="46" rx="12" fill="#14532d"/>
+  <rect x="210" y="1810" width="680" height="16" fill="#14532d"/>
+  <text x="550" y="1811" text-anchor="middle" fill="#86efac" font-size="24" font-weight="700">transcriptions  ⭐  (append-truth)</text>
+  <text x="235" y="1852" fill="#7c3aed" font-size="18" font-weight="700">id</text><text x="430" y="1852" fill="#475569" font-size="17">UUID PK</text>
+  <text x="235" y="1882" fill="#f97316" font-size="17">line_id</text><text x="430" y="1882" fill="#475569" font-size="17">FK→lines</text>
+  <text x="235" y="1912" fill="#f97316" font-size="17">user_id</text><text x="430" y="1912" fill="#475569" font-size="17">FK→users</text>
+  <text x="235" y="1942" fill="#22c55e" font-size="17" font-weight="700">kind</text><text x="430" y="1942" fill="#22c55e" font-size="17">text | cant_read | bad_crop…</text>
+  <text x="235" y="1972" fill="#94a3b8" font-size="17">text</text><text x="430" y="1972" fill="#475569" font-size="17">nullable (kind=text only)</text>
+  <text x="235" y="2002" fill="#94a3b8" font-size="17">created_at / updated_at</text>
+  <line x1="235" y1="2016" x2="870" y2="2016" stroke="#145d30" stroke-width="1"/>
+  <text x="550" y="2046" text-anchor="middle" fill="#374151" font-size="17" font-style="italic">UNIQUE(line_id, user_id) — one row per (line, user)</text>
+  <text x="550" y="2072" text-anchor="middle" fill="#374151" font-size="17" font-style="italic">Edit = UPSERT in-place, count never re-incremented</text>
+  <text x="550" y="2098" text-anchor="middle" fill="#374151" font-size="17" font-style="italic">Target: 3 distinct users per line</text>
+  <text x="550" y="2124" text-anchor="middle" fill="#374151" font-size="17" font-style="italic">4th+ response accepted (no hard reject)</text>
+
+  <!-- consents -->
+  <rect x="920" y="1780" width="400" height="340" rx="12" fill="#0d0a1e" stroke="#7c3aed" stroke-width="1.5" filter="url(#shadow-sm)"/>
+  <rect x="920" y="1780" width="400" height="46" rx="12" fill="#4c1d95"/>
+  <rect x="920" y="1810" width="400" height="16" fill="#4c1d95"/>
+  <text x="1120" y="1811" text-anchor="middle" fill="#ddd6fe" font-size="24" font-weight="700">consents (append-only)</text>
+  <text x="945" y="1852" fill="#7c3aed" font-size="18" font-weight="700">id</text><text x="1090" y="1852" fill="#475569" font-size="17">UUID PK</text>
+  <text x="945" y="1882" fill="#f97316" font-size="17">user_id</text><text x="1090" y="1882" fill="#475569" font-size="17">FK→users</text>
+  <text x="945" y="1912" fill="#94a3b8" font-size="17">consent_type</text><text x="1090" y="1912" fill="#475569" font-size="17">ENUM</text>
+  <text x="945" y="1942" fill="#94a3b8" font-size="17">version</text><text x="1090" y="1942" fill="#475569" font-size="17">semver</text>
+  <text x="945" y="1972" fill="#94a3b8" font-size="17">shown_text_ref</text>
+  <line x1="945" y1="1986" x2="1300" y2="1986" stroke="#2d1b69" stroke-width="1"/>
+  <text x="1120" y="2012" text-anchor="middle" fill="#374151" font-size="16" font-style="italic">Insert only, no updates</text>
+  <text x="1120" y="2036" text-anchor="middle" fill="#374151" font-size="16" font-style="italic">Versioned re-consent</text>
+
+  <!-- events -->
+  <rect x="1350" y="1780" width="460" height="340" rx="12" fill="#0d0a1e" stroke="#7c3aed" stroke-width="1.5" filter="url(#shadow-sm)"/>
+  <rect x="1350" y="1780" width="460" height="46" rx="12" fill="#4c1d95"/>
+  <rect x="1350" y="1810" width="460" height="16" fill="#4c1d95"/>
+  <text x="1580" y="1811" text-anchor="middle" fill="#ddd6fe" font-size="24" font-weight="700">events (audit log)</text>
+  <text x="1375" y="1852" fill="#7c3aed" font-size="18" font-weight="700">id</text><text x="1520" y="1852" fill="#475569" font-size="17">UUID PK</text>
+  <text x="1375" y="1882" fill="#f97316" font-size="17">user_id</text><text x="1520" y="1882" fill="#475569" font-size="17">FK→users</text>
+  <text x="1375" y="1912" fill="#f97316" font-size="17">line_id</text><text x="1520" y="1912" fill="#475569" font-size="17">FK→lines nullable</text>
+  <text x="1375" y="1942" fill="#94a3b8" font-size="17">event_type</text><text x="1520" y="1942" fill="#475569" font-size="17">submitted | edited…</text>
+  <text x="1375" y="1972" fill="#94a3b8" font-size="17">payload</text><text x="1520" y="1972" fill="#475569" font-size="17">JSONB</text>
+  <line x1="1375" y1="1986" x2="1790" y2="1986" stroke="#2d1b69" stroke-width="1"/>
+  <text x="1580" y="2012" text-anchor="middle" fill="#374151" font-size="16" font-style="italic">Append-only telemetry</text>
+  <text x="1580" y="2036" text-anchor="middle" fill="#374151" font-size="16" font-style="italic">Analytics + audit trail</text>
+
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- LAYER 3 — EXTERNAL SERVICES  (right 1/3) -->
+  <!-- ══════════════════════════════════════════════ -->
+  <rect x="2290" y="1340" width="560" height="860" rx="20" fill="url(#g-ext)" stroke="#374151" stroke-width="2" filter="url(#shadow)"/>
+
+  <!-- Header -->
+  <rect x="2290" y="1340" width="560" height="72" rx="20" fill="#1f2937"/>
+  <rect x="2290" y="1394" width="560" height="18" fill="#1f2937"/>
+  <text x="2570" y="1390" text-anchor="middle" fill="#9ca3af" font-size="26" font-weight="700" letter-spacing="3">EXTERNAL</text>
+
+  <!-- Google OIDC -->
+  <rect x="2330" y="1430" width="480" height="340" rx="12" fill="#0d1117" stroke="#ef4444" stroke-width="2" filter="url(#shadow-sm)"/>
+  <rect x="2330" y="1430" width="480" height="46" rx="12" fill="#7f1d1d"/>
+  <rect x="2330" y="1460" width="480" height="16" fill="#7f1d1d"/>
+  <text x="2570" y="1461" text-anchor="middle" fill="#fca5a5" font-size="22" font-weight="700">Google OIDC</text>
+  <text x="2355" y="1500" fill="#fca5a5" font-size="17" font-weight="600">Auth flow (prod):</text>
+  <text x="2355" y="1526" fill="#6b7280" font-size="16">1. User signs in via Google</text>
+  <text x="2355" y="1552" fill="#6b7280" font-size="16">2. Frontend gets ID Token</text>
+  <text x="2355" y="1578" fill="#6b7280" font-size="16">3. Backend verifies JWT</text>
+  <text x="2355" y="1604" fill="#6b7280" font-size="16">4. Decode sub / email / name</text>
+  <text x="2355" y="1630" fill="#6b7280" font-size="16">5. get_or_create_user()</text>
+  <line x1="2355" y1="1644" x2="2790" y2="1644" stroke="#7f1d1d" stroke-width="1"/>
+  <text x="2570" y="1666" text-anchor="middle" fill="#374151" font-size="15" font-style="italic">DEV: bypass, use dev@localhost</text>
+  <text x="2570" y="1686" text-anchor="middle" fill="#ef4444" font-size="14" font-style="italic">⚠ prod stub (needs impl)</text>
+  <text x="2570" y="1706" text-anchor="middle" fill="#374151" font-size="15" font-style="italic">authlib / python-jose</text>
+  <text x="2570" y="1726" text-anchor="middle" fill="#374151" font-size="15" font-style="italic">google_sub = stable identity</text>
+
+  <!-- Image Storage -->
+  <rect x="2330" y="1800" width="480" height="360" rx="12" fill="#0d1117" stroke="#f97316" stroke-width="2" filter="url(#shadow-sm)"/>
+  <rect x="2330" y="1800" width="480" height="46" rx="12" fill="#7c2d12"/>
+  <rect x="2330" y="1830" width="480" height="16" fill="#7c2d12"/>
+  <text x="2570" y="1831" text-anchor="middle" fill="#fdba74" font-size="22" font-weight="700">Image Storage</text>
+  <text x="2355" y="1872" fill="#fdba74" font-size="17" font-weight="600">resolve_image_url(path)</text>
+  <text x="2355" y="1900" fill="#6b7280" font-size="16">DEV  →  /images/{path}</text>
+  <text x="2360" y="1920" fill="#374151" font-size="15" font-style="italic">  StaticFiles ./data_sample/</text>
+  <text x="2355" y="1948" fill="#6b7280" font-size="16">PROD  →  S3 / CDN URL</text>
+  <text x="2360" y="1968" fill="#374151" font-size="15" font-style="italic">  one-line swap</text>
+  <line x1="2355" y1="1982" x2="2790" y2="1982" stroke="#7c2d12" stroke-width="1"/>
+  <text x="2570" y="2006" text-anchor="middle" fill="#374151" font-size="15" font-style="italic">Stored once per page</text>
+  <text x="2570" y="2028" text-anchor="middle" fill="#374151" font-size="15" font-style="italic">Lines = CSS bbox clip</text>
+  <text x="2570" y="2050" text-anchor="middle" fill="#374151" font-size="15" font-style="italic">No per-line image requests</text>
+  <text x="2570" y="2072" text-anchor="middle" fill="#374151" font-size="15" font-style="italic">image_path on pages row</text>
+  <text x="2570" y="2094" text-anchor="middle" fill="#374151" font-size="15" font-style="italic">Surya → import → DB</text>
+  <text x="2570" y="2116" text-anchor="middle" fill="#374151" font-size="15" font-style="italic">Pillow / numpy (future ML)</text>
+
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- LAYER 4 — DATA PIPELINES -->
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- Down arrow from DB to pipelines -->
+  <line x1="1200" y1="2200" x2="1200" y2="2280" stroke="#3b82f6" stroke-width="3" stroke-dasharray="8,5" marker-end="url(#arr-blue)"/>
+  <line x1="1700" y1="2200" x2="1700" y2="2280" stroke="#22c55e" stroke-width="3" stroke-dasharray="8,5" marker-end="url(#arr-green)"/>
+
+  <rect x="150" y="2290" width="2700" height="450" rx="20" fill="#0f172a" stroke="#334155" stroke-width="2" filter="url(#shadow)"/>
+  <rect x="150" y="2290" width="2700" height="68" rx="20" fill="#1e293b"/>
+  <rect x="150" y="2340" width="2700" height="18" fill="#1e293b"/>
+  <text x="1500" y="2338" text-anchor="middle" fill="#94a3b8" font-size="30" font-weight="700" letter-spacing="4">DATA PIPELINES</text>
+
+  <!-- Import -->
+  <rect x="200" y="2380" width="1240" height="330" rx="14" fill="#060e1e" stroke="#1d4ed8" stroke-width="2" filter="url(#shadow-sm)"/>
+  <rect x="200" y="2380" width="1240" height="48" rx="14" fill="#1e3a5f"/>
+  <rect x="200" y="2412" width="1240" height="16" fill="#1e3a5f"/>
+  <text x="820" y="2413" text-anchor="middle" fill="#93c5fd" font-size="26" font-weight="700">Import Pipeline  (detect_lines.py)</text>
+
+  <!-- Steps inline -->
+  <rect x="240" y="2448" width="190" height="80" rx="10" fill="#0a1628" stroke="#1d4ed8" stroke-width="1.5"/>
+  <text x="335" y="2482" text-anchor="middle" fill="#60a5fa" font-size="17" font-weight="700">Images</text>
+  <text x="335" y="2506" text-anchor="middle" fill="#475569" font-size="15">JPEG / PNG</text>
+
+  <line x1="430" y1="2488" x2="455" y2="2488" stroke="#3b82f6" stroke-width="2.5" marker-end="url(#arr-blue)"/>
+
+  <rect x="455" y="2448" width="190" height="80" rx="10" fill="#0a1628" stroke="#1d4ed8" stroke-width="1.5"/>
+  <text x="550" y="2482" text-anchor="middle" fill="#60a5fa" font-size="17" font-weight="700">Surya OCR</text>
+  <text x="550" y="2506" text-anchor="middle" fill="#475569" font-size="15">bbox + conf</text>
+
+  <line x1="645" y1="2488" x2="670" y2="2488" stroke="#3b82f6" stroke-width="2.5" marker-end="url(#arr-blue)"/>
+
+  <rect x="670" y="2448" width="190" height="80" rx="10" fill="#0a1628" stroke="#1d4ed8" stroke-width="1.5"/>
+  <text x="765" y="2482" text-anchor="middle" fill="#60a5fa" font-size="17" font-weight="700">batch</text>
+  <text x="765" y="2506" text-anchor="middle" fill="#475569" font-size="15">upsert</text>
+
+  <line x1="860" y1="2488" x2="885" y2="2488" stroke="#3b82f6" stroke-width="2.5" marker-end="url(#arr-blue)"/>
+
+  <rect x="885" y="2448" width="190" height="80" rx="10" fill="#0a1628" stroke="#1d4ed8" stroke-width="1.5"/>
+  <text x="980" y="2482" text-anchor="middle" fill="#60a5fa" font-size="17" font-weight="700">pages</text>
+  <text x="980" y="2506" text-anchor="middle" fill="#475569" font-size="15">upsert</text>
+
+  <line x1="1075" y1="2488" x2="1100" y2="2488" stroke="#3b82f6" stroke-width="2.5" marker-end="url(#arr-blue)"/>
+
+  <rect x="1100" y="2448" width="300" height="80" rx="10" fill="#0a1628" stroke="#22c55e" stroke-width="2"/>
+  <text x="1250" y="2482" text-anchor="middle" fill="#22c55e" font-size="17" font-weight="700">lines + SHA256 ID</text>
+  <text x="1250" y="2506" text-anchor="middle" fill="#475569" font-size="15">upsert · idempotent</text>
+
+  <text x="820" y="2566" text-anchor="middle" fill="#334155" font-size="18">Fully idempotent — re-run same import = no side effects</text>
+  <text x="820" y="2594" text-anchor="middle" fill="#334155" font-size="18">Provenance (source, license) immutable after import</text>
+  <text x="820" y="2622" text-anchor="middle" fill="#334155" font-size="18">Alembic manages schema · Pillow/numpy reserved for future steps</text>
+  <text x="820" y="2650" text-anchor="middle" fill="#334155" font-size="18">Surya fields preserved: bbox · polygon · line_index · confidence</text>
+  <text x="820" y="2678" text-anchor="middle" fill="#334155" font-size="18">Image files → storage · image_path stored on pages row</text>
+
+  <!-- Export -->
+  <rect x="1480" y="2380" width="1330" height="330" rx="14" fill="#060e1e" stroke="#22c55e" stroke-width="2" filter="url(#shadow-sm)"/>
+  <rect x="1480" y="2380" width="1330" height="48" rx="14" fill="#14532d"/>
+  <rect x="1480" y="2412" width="1330" height="16" fill="#14532d"/>
+  <text x="2145" y="2413" text-anchor="middle" fill="#86efac" font-size="26" font-weight="700">Export Pipeline  (Slice 10 — TBD)</text>
+
+  <!-- Dataset export box -->
+  <rect x="1520" y="2452" width="580" height="200" rx="10" fill="#0a1628" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="1810" y="2478" text-anchor="middle" fill="#86efac" font-size="19" font-weight="700">Dataset Export (JSONL)</text>
+  <text x="1545" y="2508" fill="#475569" font-size="17">One record per line, includes:</text>
+  <text x="1545" y="2534" fill="#475569" font-size="17">· bbox · line_index · confidence</text>
+  <text x="1545" y="2560" fill="#475569" font-size="17">· provenance (source, license)</text>
+  <text x="1545" y="2586" fill="#475569" font-size="17">· all transcriptions raw (text + flags)</text>
+  <text x="1810" y="2630" text-anchor="middle" fill="#334155" font-size="15" font-style="italic">No consensus / normalization</text>
+
+  <!-- Telemetry export box -->
+  <rect x="2140" y="2452" width="620" height="200" rx="10" fill="#0a1628" stroke="#1d4ed8" stroke-width="1.5"/>
+  <text x="2450" y="2478" text-anchor="middle" fill="#93c5fd" font-size="19" font-weight="700">Telemetry Export (JSONL)</text>
+  <text x="2165" y="2508" fill="#475569" font-size="17">Dump of events table:</text>
+  <text x="2165" y="2534" fill="#475569" font-size="17">· user_id (hashed)</text>
+  <text x="2165" y="2560" fill="#475569" font-size="17">· event_type · payload</text>
+  <text x="2165" y="2586" fill="#475569" font-size="17">· created_at</text>
+  <text x="2450" y="2630" text-anchor="middle" fill="#334155" font-size="15" font-style="italic">Internal analytics / audit</text>
+
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- DESIGN PRINCIPLES (bottom strip) -->
+  <!-- ══════════════════════════════════════════════ -->
+  <rect x="150" y="2780" width="2700" height="170" rx="20" fill="#0f172a" stroke="#1e293b" stroke-width="1.5" filter="url(#shadow-sm)"/>
+  <text x="1500" y="2824" text-anchor="middle" fill="#475569" font-size="20" font-weight="700" letter-spacing="5">CORE INVARIANTS</text>
+
+  <text x="310" y="2866" text-anchor="middle" fill="#6366f1" font-size="19" font-weight="700">Append-truth</text>
+  <text x="310" y="2888" text-anchor="middle" fill="#374151" font-size="16">1 row per (line, user)</text>
+  <text x="310" y="2908" text-anchor="middle" fill="#374151" font-size="16">edit = UPSERT in-place</text>
+
+  <line x1="500" y1="2846" x2="500" y2="2928" stroke="#1e293b" stroke-width="1.5"/>
+
+  <text x="660" y="2866" text-anchor="middle" fill="#6366f1" font-size="19" font-weight="700">Cached Counter</text>
+  <text x="660" y="2888" text-anchor="middle" fill="#374151" font-size="16">count++ on first</text>
+  <text x="660" y="2908" text-anchor="middle" fill="#374151" font-size="16">response only</text>
+
+  <line x1="840" y1="2846" x2="840" y2="2928" stroke="#1e293b" stroke-width="1.5"/>
+
+  <text x="1000" y="2866" text-anchor="middle" fill="#6366f1" font-size="19" font-weight="700">Distinct-user</text>
+  <text x="1000" y="2888" text-anchor="middle" fill="#374151" font-size="16">line never re-served</text>
+  <text x="1000" y="2908" text-anchor="middle" fill="#374151" font-size="16">to same user</text>
+
+  <line x1="1160" y1="2846" x2="1160" y2="2928" stroke="#1e293b" stroke-width="1.5"/>
+
+  <text x="1330" y="2866" text-anchor="middle" fill="#6366f1" font-size="19" font-weight="700">Target 3</text>
+  <text x="1330" y="2888" text-anchor="middle" fill="#374151" font-size="16">3 distinct users per line</text>
+  <text x="1330" y="2908" text-anchor="middle" fill="#374151" font-size="16">4th+ accepted silently</text>
+
+  <line x1="1510" y1="2846" x2="1510" y2="2928" stroke="#1e293b" stroke-width="1.5"/>
+
+  <text x="1680" y="2866" text-anchor="middle" fill="#6366f1" font-size="19" font-weight="700">Pure Rules</text>
+  <text x="1680" y="2888" text-anchor="middle" fill="#374151" font-size="16">eligibility / counting</text>
+  <text x="1680" y="2908" text-anchor="middle" fill="#374151" font-size="16">in plain functions, no DB</text>
+
+  <line x1="1860" y1="2846" x2="1860" y2="2928" stroke="#1e293b" stroke-width="1.5"/>
+
+  <text x="2030" y="2866" text-anchor="middle" fill="#6366f1" font-size="19" font-weight="700">Thin Endpoints</text>
+  <text x="2030" y="2888" text-anchor="middle" fill="#374151" font-size="16">zero business logic</text>
+  <text x="2030" y="2908" text-anchor="middle" fill="#374151" font-size="16">in route handlers</text>
+
+  <line x1="2200" y1="2846" x2="2200" y2="2928" stroke="#1e293b" stroke-width="1.5"/>
+
+  <text x="2390" y="2866" text-anchor="middle" fill="#6366f1" font-size="19" font-weight="700">No Interpretation</text>
+  <text x="2390" y="2888" text-anchor="middle" fill="#374151" font-size="16">collect faithfully</text>
+  <text x="2390" y="2908" text-anchor="middle" fill="#374151" font-size="16">consensus = offline</text>
+
+  <line x1="2590" y1="2846" x2="2590" y2="2928" stroke="#1e293b" stroke-width="1.5"/>
+
+  <text x="2750" y="2866" text-anchor="middle" fill="#6366f1" font-size="19" font-weight="700">Immutable</text>
+  <text x="2750" y="2888" text-anchor="middle" fill="#374151" font-size="16">provenance locked</text>
+  <text x="2750" y="2908" text-anchor="middle" fill="#374151" font-size="16">at import time</text>
+
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- FOOTER -->
+  <!-- ══════════════════════════════════════════════ -->
+  <text x="1500" y="2980" text-anchor="middle" fill="#1e293b" font-size="19">transcriptor · yanirmr · 2026  ·  FastAPI · PostgreSQL · SQLAlchemy · Alembic · Google OIDC · Surya OCR</text>
+
+</svg>

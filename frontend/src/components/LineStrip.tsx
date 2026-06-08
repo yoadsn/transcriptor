@@ -12,10 +12,11 @@ interface LineStripProps {
 
 const ACTIVE_HEIGHT = 100
 const CONTEXT_HEIGHT = 48
+const MAX_STRIP_WIDTH = 688   // content max-width (720) minus 2×16px padding
 
 export function LineStrip({ line, pageDims, imageUrl, role, displayHeight }: LineStripProps) {
   const height = displayHeight ?? (role === 'active' ? ACTIVE_HEIGHT : CONTEXT_HEIGHT)
-  const css = cropStyle(line.bbox, pageDims, height)
+  const css = cropStyle(line.bbox, pageDims, height, 16, MAX_STRIP_WIDTH)
 
   const stripClass = [
     styles.strip,
@@ -35,7 +36,7 @@ export function LineStrip({ line, pageDims, imageUrl, role, displayHeight }: Lin
       />
       {role === 'active' && (
         <div className={styles.label}>
-          תמלול <span dir="ltr">{line.transcription_count}</span> מתוך{' '}
+          תעתוק <span dir="ltr">{line.transcription_count}</span> מתוך{' '}
           <span dir="ltr">3</span>
         </div>
       )}

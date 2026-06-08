@@ -1,237 +1,521 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useRef, useEffect, useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { api } from '../api'
-import type { SessionDTO, SessionLine, SubmitKind, FlagKind } from '../types'
-import { WorkHeader } from '../components/WorkHeader'
-import { LineStrip } from '../components/LineStrip'
-import { TranscriptionInput } from '../components/TranscriptionInput'
-import { ActionBar } from '../components/ActionBar'
-import { FlagPopover } from '../components/FlagPopover'
-import { Toast } from '../components/Toast'
-import { WorkSkeleton } from '../components/Skeleton'
-import styles from './WorkScreen.module.css'
+import { useLoop } from '../hooks/useLoop'
+import type { LoopLine, SaveToast } from '../hooks/useLoop'
+import type { FlagKind } from '../types'
+import { Icon } from '../components/shared'
 
-interface FailedSubmit {
-  lineId: string
-  body: { kind: SubmitKind; text?: string }
-  retries: number
+const EASE = 'cubic-bezier(.3,.8,.3,1)'
+
+// ── Tick bar ──────────────────────────────────────────────────────────────────
+function ImmTicks({ lines, cursor, onJump }: {
+  lines: LoopLine[]
+  cursor: number
+  onJump: (i: number) => void
+}) {
+  return (
+    <div style={{ display: 'flex', gap: 5, alignItems: 'center' }}>
+      {lines.map((l, i) => {
+        const done = l.status === 'done_by_you' || l.status === 'flagged'
+        return (
+          <button
+            key={l.id}
+            onClick={() => onJump(i)}
+            title={`שורה ${i + 1}`}
+            style={{ border: 'none', background: 'transparent', padding: '4px 0', cursor: 'pointer', lineHeight: 0 }}
+          >
+            <span style={{
+              display: 'block',
+              width: i === cursor ? 16 : 7, height: 4, borderRadius: 2,
+              background: i === cursor
+                ? 'var(--tl-spotlight)'
+                : done ? 'oklch(0.7 0.06 150)' : 'rgba(60,45,25,0.25)',
+              transition: 'width .25s, background .25s',
+            }} />
+          </button>
+        )
+      })}
+    </div>
+  )
 }
 
-export function WorkScreen() {
-  const navigate = useNavigate()
-  const [session, setSession] = useState<SessionDTO | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [cursorIdx, setCursorIdx] = useState(0)
-  const [inputValue, setInputValue] = useState('')
-  const [flagOpen, setFlagOpen] = useState(false)
-  const [toastMsg, setToastMsg] = useState<string | null>(null)
-  const [imageError, setImageError] = useState(false)
-  const [todayCount, setTodayCount] = useState(0)
-  const retryQueueRef = useRef<FailedSubmit[]>([])
-  const retryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const submitLineRef = useRef<((lineId: string, body: { kind: SubmitKind; text?: string }, retriesLeft?: number) => Promise<void>) | null>(null)
+// ── Flag popover ──────────────────────────────────────────────────────────────
+function FlagButton({ reasons, onPick }: {
+  reasons: { kind: FlagKind; label: string }[]
+  onPick: (kind: FlagKind) => void
+}) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    let cancelled = false
-    api.nextSession().then((dto) => {
-      if (cancelled) return
-      if (!dto) {
-        navigate('/done')
-        return
-      }
-      setSession(dto)
-      const firstEligible = dto.lines.findIndex(
-        (l) => l.status === 'eligible' || l.status === 'done_by_you'
-      )
-      setCursorIdx(firstEligible >= 0 ? firstEligible : 0)
-      setLoading(false)
-      // Preload page image to detect failures
-      const img = new Image()
-      img.src = dto.image_url
-      img.onerror = () => { if (!cancelled) setImageError(true) }
-    }).catch(() => {
-      if (!cancelled) setLoading(false)
-    })
-    return () => { cancelled = true }
-  }, [navigate])
-
-  function getActiveLine(lines: SessionLine[], idx: number): SessionLine | null {
-    return lines[idx] ?? null
-  }
-
-  function processRetryQueue() {
-    const queue = retryQueueRef.current.splice(0)
-    queue.forEach(({ lineId, body, retries }) => {
-      if (submitLineRef.current) {
-        void submitLineRef.current(lineId, body, retries)
-      }
-    })
-  }
-
-  const submitLine = useCallback(
-    async (lineId: string, body: { kind: SubmitKind; text?: string }, retriesLeft = 3) => {
-      try {
-        await api.submitResponse(lineId, body)
-        setTodayCount((c) => c + 1)
-      } catch {
-        if (retriesLeft > 0) {
-          const delay = Math.pow(2, 3 - retriesLeft) * 1000
-          retryQueueRef.current.push({ lineId, body, retries: retriesLeft - 1 })
-          if (retryTimerRef.current) clearTimeout(retryTimerRef.current)
-          retryTimerRef.current = setTimeout(() => processRetryQueue(), delay)
-        } else {
-          setToastMsg('שמירה נכשלה — מנסה שוב')
-        }
-      }
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
-  )
-
-  submitLineRef.current = submitLine
-
-  function advance(line: SessionLine, kind: SubmitKind, text?: string) {
-    if (!session) return
-    const body: { kind: SubmitKind; text?: string } = { kind }
-    if (text) body.text = text
-
-    const nextIdx = cursorIdx + 1
-    setInputValue('')
-    setFlagOpen(false)
-
-    if (nextIdx >= session.lines.length) {
-      void submitLine(line.id, body)
-      navigate('/done')
-      return
+    if (!open) return
+    const handler = (e: PointerEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
     }
-
-    setCursorIdx(nextIdx)
-    const nextLine = session.lines[nextIdx]
-    setInputValue(
-      nextLine.status === 'done_by_you' ? (nextLine.your_text ?? '') : ''
-    )
-    void submitLine(line.id, body)
-  }
-
-  function handleSubmit(val: string) {
-    if (!session) return
-    const line = getActiveLine(session.lines, cursorIdx)
-    if (!line) return
-    advance(line, 'text', val)
-  }
-
-  function handleFlag(kind: FlagKind) {
-    if (!session) return
-    const line = getActiveLine(session.lines, cursorIdx)
-    if (!line) return
-    advance(line, kind)
-  }
-
-  if (loading) {
-    return (
-      <div className={styles.page}>
-        <div className={styles.content}>
-          <WorkSkeleton />
-        </div>
-      </div>
-    )
-  }
-
-  if (!session) return null
-
-  const { lines, image_url, width_px, height_px, page_id } = session
-  const pageDims = { width_px, height_px }
-  const activeLine = getActiveLine(lines, cursorIdx)
-  const prevLine = cursorIdx > 0 ? lines[cursorIdx - 1] : null
-  const nextLine = cursorIdx < lines.length - 1 ? lines[cursorIdx + 1] : null
-  const progress = lines.length > 0 ? (cursorIdx / lines.length) * 100 : 0
+    document.addEventListener('pointerdown', handler, true)
+    return () => document.removeEventListener('pointerdown', handler, true)
+  }, [open])
 
   return (
-    <div className={styles.page}>
-      <WorkHeader
-        pageNum={parseInt(page_id, 10) || 1}
-        lineNum={cursorIdx + 1}
-        total={lines.length}
-        todayCount={todayCount}
-        progress={progress}
-      />
-
-      <div className={styles.content}>
-        {imageError ? (
-          <div className={styles.imageError}>
-            <p className={styles.imageErrorText}>תמונת העמוד לא נטענה</p>
-            <button className={styles.retryBtn} onClick={() => setImageError(false)}>
-              נסה שוב
+    <div ref={ref} style={{ position: 'relative' }}>
+      <button className="tl-flagbtn" onClick={() => setOpen((o) => !o)}>
+        <Icon name="flag" size={15} color="var(--tl-muted)" />
+        <span>לא קריא / דיווח / לדגל</span>
+      </button>
+      {open && (
+        <div style={{
+          position: 'absolute', bottom: 'calc(100% + 8px)',
+          right: 0, minWidth: 196,
+          background: 'var(--tl-surface)', borderRadius: 12,
+          border: '0.5px solid var(--tl-border)',
+          boxShadow: '0 10px 34px rgba(40,30,20,0.16)',
+          padding: 6, zIndex: 30,
+        }}>
+          <div style={{
+            fontSize: 12, color: 'var(--tl-muted)',
+            padding: '6px 10px 4px', fontFamily: 'var(--font-ui)',
+          }}>בחר סיבת דגל</div>
+          {reasons.map((r) => (
+            <button
+              key={r.kind}
+              className="tl-reason"
+              onClick={() => { setOpen(false); onPick(r.kind) }}
+            >
+              {r.label}
             </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ── Finished overlay ──────────────────────────────────────────────────────────
+function FinishedOverlay({ daily, done, onContinue }: {
+  daily: number
+  done: number
+  onContinue: () => void
+}) {
+  const fmt = (n: number) => new Intl.NumberFormat('en-US').format(n)
+  return (
+    <div style={{
+      position: 'absolute', inset: 0,
+      background: 'var(--tl-page)',
+      display: 'flex', flexDirection: 'column',
+      alignItems: 'center', justifyContent: 'center',
+      gap: 18, textAlign: 'center', padding: 32, zIndex: 40,
+    }}>
+      <div style={{
+        width: 54, height: 54, borderRadius: 27,
+        background: 'oklch(0.93 0.04 150)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+      }}>
+        <Icon name="check" size={26} color="oklch(0.52 0.09 150)" strokeWidth={2} />
+      </div>
+      <div>
+        <div style={{ fontFamily: 'var(--font-serif)', fontSize: 26, fontWeight: 500, color: 'var(--tl-ink)' }}>
+          סיימתם את העמוד
+        </div>
+        <div style={{ fontFamily: 'var(--font-ui)', fontSize: 15, color: 'var(--tl-muted)', marginTop: 6 }}>
+          תיעתקתם {done} שורות —{' '}
+          <span style={{ direction: 'ltr', display: 'inline-block' }}>{fmt(daily)}</span> היום
+        </div>
+      </div>
+      <button
+        onClick={onContinue}
+        style={{
+          display: 'inline-flex', alignItems: 'center', gap: 8,
+          fontFamily: 'var(--font-ui)', fontSize: 15, fontWeight: 600, color: '#fff',
+          background: 'var(--tl-accent)', border: 'none', borderRadius: 10,
+          padding: '11px 22px', cursor: 'pointer',
+          transition: 'background 0.15s',
+        }}
+      >
+        המשך לעמוד הבא <Icon name="forward" size={16} color="#fff" />
+      </button>
+    </div>
+  )
+}
+
+// ── Save toast ────────────────────────────────────────────────────────────────
+function SaveToastBadge({ toast }: { toast: SaveToast | null }) {
+  if (!toast) return null
+  const isRetry = toast.kind === 'retry'
+  return (
+    <div style={{
+      position: 'absolute', bottom: 16, insetInlineStart: 16, zIndex: 50,
+      display: 'flex', alignItems: 'center', gap: 8,
+      fontFamily: 'var(--font-ui)', fontSize: 13, fontWeight: 500,
+      color: isRetry ? 'var(--tl-ink)' : 'oklch(0.45 0.08 150)',
+      background: 'var(--tl-surface)', border: '0.5px solid var(--tl-border)',
+      borderRadius: 999, padding: '7px 13px',
+      boxShadow: '0 4px 16px rgba(40,30,20,0.12)',
+    }}>
+      <span style={{
+        width: 8, height: 8, borderRadius: 4,
+        background: isRetry ? 'oklch(0.7 0.09 70)' : 'oklch(0.6 0.08 150)',
+        animation: isRetry ? 'tlpulse 1s ease-in-out infinite' : 'none',
+      }} />
+      {isRetry ? 'שמירה נכשלה — מנסה שוב.' : 'נשמר ✓'}
+    </div>
+  )
+}
+
+// ── Shimmer skeleton ──────────────────────────────────────────────────────────
+function Skeleton({ top, sideM, pageH }: { top: number; sideM: number; pageH: number }) {
+  return (
+    <div style={{
+      position: 'absolute', inset: 0,
+      padding: `${top}px ${sideM}px`,
+    }}>
+      <div style={{
+        width: '100%',
+        height: Math.max(60, pageH),
+        borderRadius: 6,
+        background: 'linear-gradient(90deg, var(--tl-muted-fill) 25%, color-mix(in srgb, var(--tl-muted-fill) 55%, #fff) 50%, var(--tl-muted-fill) 75%)',
+        backgroundSize: '200% 100%',
+        animation: 'tlshimmer 1.4s ease-in-out infinite',
+      }} />
+    </div>
+  )
+}
+
+// ── Main screen ───────────────────────────────────────────────────────────────
+export function WorkScreen() {
+  const navigate = useNavigate()
+  const L = useLoop()
+  const taRef = useRef<HTMLTextAreaElement>(null)
+  const wrapRef = useRef<HTMLDivElement>(null)
+  const cardRef = useRef<HTMLDivElement>(null)
+  const drag = useRef<{ y: number } | null>(null)
+
+  const [box, setBox] = useState({ w: 860, h: 560 })
+  const [cardH, setCardH] = useState(150)
+  const [peek, setPeek] = useState(0)
+
+  // Navigate to AllCaughtUp when no session
+  useEffect(() => {
+    if (!L.loading && L.noSession) navigate('/done', { replace: true })
+  }, [L.loading, L.noSession, navigate])
+
+  // Measure container
+  useEffect(() => {
+    const el = wrapRef.current
+    if (!el || typeof ResizeObserver === 'undefined') return
+    const ro = new ResizeObserver((entries) => {
+      const r = entries[0].contentRect
+      setBox({ w: r.width, h: r.height })
+    })
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
+
+  // Measure console card height every render
+  useEffect(() => {
+    if (cardRef.current) setCardH(cardRef.current.offsetHeight)
+  })
+
+  // Auto-focus textarea on desktop after each advance
+  useEffect(() => {
+    if (!L.loading && !L.finished && window.innerWidth >= 768) {
+      taRef.current?.focus()
+    }
+  }, [L.cursor, L.finished, L.loading])
+
+  // Snap back to line when cursor advances
+  useEffect(() => { setPeek(0) }, [L.cursor])
+
+  // ── Layout math ──────────────────────────────────────────────────────────────
+  const sideM = window.innerWidth < 768 ? 14 : 26
+  const headerH = window.innerWidth < 768 ? 36 : 44
+  const pageDispW = Math.max(40, box.w - sideM * 2)
+  const page = L.page
+
+  // When page not yet loaded, use placeholder dimensions
+  const pagePxW = page?.width_px ?? 474
+  const pagePxH = page?.height_px ?? 218
+  const scale = pageDispW / pagePxW
+  const pageDispH = pagePxH * scale
+
+  const b = L.current?.bbox ?? { x: 0, y: 0, w: pagePxW, h: 30 }
+  const lx = b.x * scale
+  const ly = b.y * scale
+  const lw = b.w * scale
+  const lh = b.h * scale
+
+  const baseTop = headerH + (window.innerWidth < 768 ? 6 : 12)
+  const cardTopY = box.h - cardH
+  const zonePad = window.innerWidth < 768 ? 12 : 26
+  const availH = cardTopY - zonePad - baseTop
+  const fits = pageDispH <= availH
+  const centerTop = (box.h - pageDispH) / 2
+  const pageTop0 = fits
+    ? Math.max(baseTop, Math.min(centerTop, cardTopY - zonePad - pageDispH))
+    : baseTop
+  const lineBottom0 = pageTop0 + ly + lh
+  const autoTy = fits ? 0 : Math.min(0, cardTopY - zonePad - lineBottom0)
+  const minTy = fits ? 0 : Math.min(0, cardTopY - zonePad - (pageTop0 + pageDispH))
+  const peekLo = minTy - autoTy
+  const peekHi = -autoTy
+  const clamp = useCallback((p: number) => Math.max(peekLo, Math.min(peekHi, p)), [peekLo, peekHi])
+  const ty = autoTy + clamp(peek)
+  const canRoam = minTy < -1
+  const peeking = canRoam && Math.abs(clamp(peek)) > 4
+
+  // Wheel roam
+  useEffect(() => {
+    const el = wrapRef.current
+    if (!el) return
+    const handler = (e: WheelEvent) => {
+      if (!canRoam) return
+      e.preventDefault()
+      e.stopPropagation()
+      setPeek((p) => clamp(p - e.deltaY))
+    }
+    el.addEventListener('wheel', handler, { capture: true, passive: false })
+    return () => el.removeEventListener('wheel', handler, true)
+  }, [canRoam, clamp])
+
+  const onPointerDown = (e: React.PointerEvent) => {
+    if (!canRoam) return
+    drag.current = { y: e.clientY }
+    try { wrapRef.current?.setPointerCapture(e.pointerId) } catch { /* ignore */ }
+  }
+  const onPointerMove = (e: React.PointerEvent) => {
+    if (!drag.current) return
+    const dy = e.clientY - drag.current.y
+    drag.current.y = e.clientY
+    setPeek((p) => clamp(p + dy))
+  }
+  const onPointerUp = (e: React.PointerEvent) => {
+    drag.current = null
+    try { wrapRef.current?.releasePointerCapture(e.pointerId) } catch { /* ignore */ }
+  }
+
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); L.submit() }
+  }
+
+  const isDragging = !!drag.current
+  const transition = isDragging ? 'none' : `transform .45s ${EASE}`
+  const spotTransition = isDragging ? 'none' : `left .45s ${EASE}, top .45s ${EASE}, width .35s, height .35s`
+
+  // ── Stage (full-bleed folio) ──────────────────────────────────────────────
+  const stage = (
+    <div
+      ref={wrapRef}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={onPointerUp}
+      onPointerCancel={onPointerUp}
+      style={{
+        position: 'absolute', inset: 0, overflow: 'hidden',
+        cursor: !canRoam ? 'default' : isDragging ? 'grabbing' : 'grab',
+        touchAction: 'none', userSelect: 'none',
+      }}
+    >
+      {/* page matte */}
+      <div style={{ position: 'absolute', inset: 0, background: 'var(--tl-page)' }} />
+
+      {/* page + spotlight */}
+      <div style={{
+        position: 'absolute', left: sideM, top: pageTop0, width: pageDispW,
+        transform: `translateY(${ty}px)`,
+        transition,
+        willChange: 'transform',
+      }}>
+        {/* dimmed sheet */}
+        <img
+          src={page?.image_url}
+          alt=""
+          draggable={false}
+          style={{
+            width: pageDispW, display: 'block', borderRadius: 6,
+            boxShadow: '0 8px 30px rgba(40,30,20,0.18)',
+            filter: 'brightness(0.64) saturate(0.82) contrast(0.98)',
+            pointerEvents: 'none',
+          }}
+        />
+        {/* spotlight cut-out */}
+        {L.current && (
+          <div style={{
+            position: 'absolute', left: lx, top: ly, width: lw, height: lh,
+            overflow: 'hidden', borderRadius: 4,
+            boxShadow: `0 0 0 2.5px var(--tl-spotlight), 0 0 24px 3px var(--tl-spotlight-glow), 0 6px 18px rgba(40,30,20,0.28)`,
+            transition: spotTransition,
+          }}>
+            <img
+              src={page?.image_url}
+              alt=""
+              draggable={false}
+              style={{
+                position: 'absolute', left: -lx, top: -ly,
+                width: pageDispW, maxWidth: 'none', display: 'block',
+                pointerEvents: 'none',
+              }}
+            />
           </div>
-        ) : (
-          <>
-            {prevLine && (
-              <div className={styles.contextStrip}>
-                <LineStrip
-                  line={prevLine}
-                  pageDims={pageDims}
-                  imageUrl={image_url}
-                  role="previous"
-                />
-              </div>
-            )}
-
-            {activeLine && (
-              <div className={styles.activeStrip}>
-                <LineStrip
-                  line={activeLine}
-                  pageDims={pageDims}
-                  imageUrl={image_url}
-                  role="active"
-                />
-              </div>
-            )}
-
-            {nextLine && (
-              <div className={styles.contextStrip}>
-                <LineStrip
-                  line={nextLine}
-                  pageDims={pageDims}
-                  imageUrl={image_url}
-                  role="next"
-                />
-              </div>
-            )}
-          </>
         )}
-
-        {activeLine && (
-          <TranscriptionInput
-            lineId={activeLine.id}
-            value={inputValue}
-            onChange={setInputValue}
-            onSubmit={handleSubmit}
-            onFKeyEmpty={() => setFlagOpen(true)}
-          />
+        {/* RTL leading-edge caret */}
+        {L.current && (
+          <div style={{
+            position: 'absolute',
+            left: lx + lw, top: ly + lh / 2,
+            transform: 'translate(2px,-50%)',
+            width: 0, height: 0,
+            borderTop: '6px solid transparent',
+            borderBottom: '6px solid transparent',
+            borderRight: '7px solid var(--tl-spotlight)',
+            transition: spotTransition,
+            pointerEvents: 'none',
+          }} />
         )}
-
-        <div className={styles.bottomPad} />
       </div>
 
-      {activeLine && (
-        <>
-          <ActionBar
-            onSubmit={() => handleSubmit(inputValue)}
-            onFlagOpen={() => setFlagOpen(true)}
-            canSubmit={inputValue.trim().length > 0}
-          />
+      {/* top scrim */}
+      <div style={{
+        position: 'absolute', top: 0, left: 0, right: 0, height: headerH + 22,
+        background: `linear-gradient(var(--tl-page), color-mix(in srgb, var(--tl-page) 12%, transparent))`,
+        pointerEvents: 'none',
+      }} />
 
-          <FlagPopover
-            isOpen={flagOpen}
-            onClose={() => setFlagOpen(false)}
-            onSelect={handleFlag}
-          />
-        </>
-      )}
+      {/* header bar */}
+      <div style={{
+        position: 'absolute', top: 0, left: 0, right: 0, height: headerH,
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        padding: `0 ${sideM}px`, fontFamily: 'var(--font-ui)',
+      }}>
+        <span style={{ fontSize: 12.5, color: 'var(--tl-muted)' }}>
+          עמוד <span style={{ direction: 'ltr', display: 'inline-block' }}>{page?.page_id ?? ''}</span>
+        </span>
+        <ImmTicks lines={L.lines} cursor={L.cursor} onJump={L.goTo} />
+        <span style={{ fontSize: 12.5, fontWeight: 600, color: 'oklch(0.5 0.08 150)' }}>
+          <span style={{ direction: 'ltr', display: 'inline-block' }}>
+            {new Intl.NumberFormat('en-US').format(L.daily)}
+          </span>{' '}היום
+        </span>
+      </div>
 
-      {toastMsg && (
-        <Toast message={toastMsg} onDismiss={() => setToastMsg(null)} />
+      {/* return-to-line pill */}
+      <button
+        onClick={(e) => { e.stopPropagation(); setPeek(0) }}
+        onPointerDown={(e) => e.stopPropagation()}
+        style={{
+          position: 'absolute', top: headerH + 4, left: '50%', transform: 'translateX(-50%)',
+          display: 'inline-flex', alignItems: 'center', gap: 5,
+          fontFamily: 'var(--font-ui)', fontSize: 12, fontWeight: 600,
+          color: 'oklch(0.5 0.08 250)', background: 'var(--tl-surface)',
+          border: '0.5px solid oklch(0.6 0.08 250 / 0.45)',
+          borderRadius: 999, padding: '5px 11px', cursor: 'pointer',
+          boxShadow: '0 2px 10px rgba(40,30,20,0.14)',
+          opacity: peeking ? 1 : 0, pointerEvents: peeking ? 'auto' : 'none',
+          transition: 'opacity 0.2s', zIndex: 4,
+        }}
+      >
+        חזרה לשורה <Icon name="forward" size={13} color="oklch(0.5 0.08 250)" />
+      </button>
+    </div>
+  )
+
+  // ── Input console ─────────────────────────────────────────────────────────
+  const console_ = (
+    <div
+      ref={cardRef}
+      dir="rtl"
+      style={{
+        position: 'absolute', left: 0, right: 0, bottom: 0, zIndex: 6,
+        padding: window.innerWidth < 768 ? '12px 14px 14px' : '15px 26px 18px',
+        background: 'color-mix(in srgb, var(--tl-surface) 86%, transparent)',
+        backdropFilter: 'blur(14px) saturate(1.1)',
+        WebkitBackdropFilter: 'blur(14px) saturate(1.1)',
+        borderTop: '0.5px solid var(--tl-border)',
+        borderRadius: '16px 16px 0 0',
+        boxShadow: '0 -10px 30px rgba(40,30,20,0.14)',
+      }}
+    >
+      <div style={{
+        display: 'flex', alignItems: 'center', gap: 8, marginBottom: 9,
+        fontFamily: 'var(--font-ui)', fontSize: 12, color: 'var(--tl-muted)',
+      }}>
+        {L.editing ? (
+          <span style={{
+            display: 'inline-flex', alignItems: 'center', gap: 5, fontWeight: 600,
+            color: 'oklch(0.5 0.08 250)',
+            background: 'oklch(0.6 0.08 250 / 0.12)',
+            padding: '2px 9px', borderRadius: 999,
+          }}>עורכים שורה שלכם</span>
+        ) : (
+          <span>
+            תעתוק{' '}
+            <span style={{ direction: 'ltr', display: 'inline-block' }}>
+              {L.current?.transcription_count ?? 0}
+            </span>{' '}מתוך{' '}
+            <span style={{ direction: 'ltr', display: 'inline-block' }}>3</span>
+          </span>
+        )}
+      </div>
+
+      <textarea
+        ref={taRef}
+        className="tl-textarea"
+        dir="rtl"
+        lang="he"
+        value={L.input}
+        placeholder="העתיקו כאן את הטקסט הכתוב בשורה המסומנת."
+        onChange={(e) => L.setInput(e.target.value)}
+        onKeyDown={onKeyDown}
+        rows={1}
+        style={{
+          width: '100%',
+          height: window.innerWidth < 768 ? 50 : 58,
+          background: 'var(--tl-surface)',
+        }}
+      />
+
+      <div style={{
+        display: 'flex', alignItems: 'center',
+        justifyContent: 'space-between',
+        marginTop: 11, gap: 14,
+      }}>
+        <FlagButton reasons={L.FLAG_REASONS} onPick={L.flag} />
+        <button
+          className="tl-submit"
+          onClick={L.submit}
+          disabled={!L.input.trim()}
+        >
+          <span>{L.editing ? 'שמור עריכה' : 'שלח שורה'}</span>
+          <Icon name="forward" size={16} color="#fff" />
+          <span className="tl-kbd">Enter</span>
+        </button>
+      </div>
+    </div>
+  )
+
+  return (
+    <div dir="rtl" lang="he" style={{
+      height: '100vh', background: 'var(--tl-page)',
+      position: 'relative', display: 'flex', flexDirection: 'column',
+    }}>
+      <div style={{ flex: 1, position: 'relative', minHeight: 0 }}>
+        {L.loading
+          ? <Skeleton top={baseTop} sideM={sideM} pageH={pageDispH} />
+          : stage
+        }
+        {!L.loading && console_}
+      </div>
+
+      {/* page-fill progress bar (fills RTL) */}
+      <div style={{ height: 5, background: 'var(--tl-muted-fill)', flexShrink: 0 }}>
+        <div style={{
+          height: '100%', width: `${L.pageFill * 100}%`,
+          background: 'oklch(0.62 0.08 150)',
+          transition: 'width .35s', float: 'right',
+        }} />
+      </div>
+
+      <SaveToastBadge toast={L.toast} />
+      {L.finished && (
+        <FinishedOverlay daily={L.daily} done={L.done} onContinue={L.reset} />
       )}
     </div>
   )

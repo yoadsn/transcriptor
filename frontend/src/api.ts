@@ -26,6 +26,27 @@ async function request<T>(path: string, options?: RequestInit): Promise<T | null
   return res.json() as Promise<T>
 }
 
+// ── Response types ────────────────────────────────────────────────────────────
+
+export interface ProfileDTO {
+  name: string
+  today: number
+  goal: number
+  streak: number
+  week: number
+  total: number
+  pages: number
+}
+
+export interface CommunityDTO {
+  lines: number
+  pages: number
+  volunteers: number
+  manuscripts: number
+}
+
+// ── API calls ─────────────────────────────────────────────────────────────────
+
 export const api = {
   nextSession: (): Promise<SessionDTO | null> =>
     request<SessionDTO>('/api/next-session'),
@@ -45,8 +66,11 @@ export const api = {
       body: JSON.stringify(body),
     }),
 
-  getProgress: (): Promise<{ text_count: number } | null> =>
-    request<{ text_count: number }>('/api/me/progress'),
+  getProfile: (): Promise<ProfileDTO | null> =>
+    request<ProfileDTO>('/api/me/profile'),
+
+  getCommunityStats: (): Promise<CommunityDTO | null> =>
+    request<CommunityDTO>('/api/community'),
 
   getLeaderboard: (): Promise<Array<{ display_name: string; text_count: number }> | null> =>
     request<Array<{ display_name: string; text_count: number }>>('/api/leaderboard'),

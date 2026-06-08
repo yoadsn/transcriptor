@@ -50,7 +50,7 @@ export function TranscriptionInput({
         lang="he"
         placeholder="הקלד את הטקסט כאן…"
         rows={3}
-        aria-label="שדה תמלול"
+        aria-label="שדה תעתוק"
       />
     </div>
   )

@@ -13,7 +13,7 @@ export function WorkHeader({ pageNum, lineNum, total, todayCount, progress }: Wo
 
   return (
     <header className={styles.header}>
-      <span className={styles.brand}>מתמלל</span>
+      <span className={styles.brand}>מתעתק</span>
       <div className={styles.meta}>
         <span className={styles.pageInfo}>
           עמוד <span dir="ltr">{pageNum}</span> · שורה{' '}
