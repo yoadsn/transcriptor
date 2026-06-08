@@ -87,9 +87,11 @@ changes = {
     "app/api/routes/progress.py": read("app/api/routes/progress.py"),
     # Frontend dist - updated
     "frontend/dist/index.html": read("frontend/dist/index.html"),
-    "frontend/dist/assets/index-DA3FrC_K.js": read("frontend/dist/assets/index-DA3FrC_K.js"),
-    "frontend/dist/assets/index-n7V6efoB.css": read("frontend/dist/assets/index-n7V6efoB.css"),
+    "frontend/dist/assets/index-Da_JJXot.js": read("frontend/dist/assets/index-Da_JJXot.js"),
+    "frontend/dist/assets/index-p4bD19IS.css": read("frontend/dist/assets/index-p4bD19IS.css"),
     # Delete old bundles
+    "frontend/dist/assets/index-DA3FrC_K.js": None,
+    "frontend/dist/assets/index-n7V6efoB.css": None,
     "frontend/dist/assets/index-D5fHRAy5.js": None,
     "frontend/dist/assets/index-BTg3WXxF.js": None,
     "frontend/dist/assets/index-DavyPLeL.js": None,
@@ -102,7 +104,7 @@ for k, v in changes.items():
 
 result = post(
     f"{API_BASE}/apps/{APP_ID}/changeset",
-    {"message": "Replace תמלל/מתמלל with תעתיק/תעתוק, fix BrandMark logo letter", "changes": changes},
+    {"message": "Align UI copy and tokens with design handoff", "changes": changes},
 )
 print(f"\nChangeset SHA: {result}")
 

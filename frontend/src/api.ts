@@ -1,4 +1,4 @@
-import type { SessionDTO, LineStatusDTO, SubmitKind } from './types'
+import type { SessionDTO, LineStatusDTO, SubmitKind, AdminStatsDTO, AdminUserDTO, AdminCoverageDTO, AdminQueueDTO } from './types'
 
 const BASE = ''
 
@@ -74,4 +74,16 @@ export const api = {
 
   getLeaderboard: (): Promise<Array<{ display_name: string; text_count: number }> | null> =>
     request<Array<{ display_name: string; text_count: number }>>('/api/leaderboard'),
+
+  getAdminStats: (): Promise<AdminStatsDTO | null> =>
+    request<AdminStatsDTO>('/api/admin/stats'),
+
+  getAdminUsers: (): Promise<AdminUserDTO[] | null> =>
+    request<AdminUserDTO[]>('/api/admin/users'),
+
+  getAdminCoverage: (): Promise<AdminCoverageDTO[] | null> =>
+    request<AdminCoverageDTO[]>('/api/admin/coverage'),
+
+  getAdminQueue: (): Promise<AdminQueueDTO | null> =>
+    request<AdminQueueDTO>('/api/admin/queue'),
 }

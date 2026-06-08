@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from app.api.routes import community, consent, leaderboard, progress, session, transcription
+from app.api.routes import admin, community, consent, leaderboard, progress, session, transcription
 from app.config import settings
 
 app = FastAPI(title="Transcriptor")
@@ -27,6 +27,7 @@ app.include_router(transcription.router, prefix="/api")
 app.include_router(consent.router, prefix="/api")
 app.include_router(progress.router, prefix="/api")
 app.include_router(leaderboard.router, prefix="/api")
+app.include_router(admin.router, prefix="/api/admin")
 
 
 @app.get("/health")

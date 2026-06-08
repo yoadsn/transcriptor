@@ -45,6 +45,16 @@ def get_current_user(
     )
 
 
+def require_admin(
+    user: Annotated[User, Depends(get_current_user)],
+) -> User:
+    if settings.dev_mode:
+        return user
+    if user.email not in settings.admin_emails:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    return user
+
+
 def require_contribution_consent(
     user: Annotated[User, Depends(get_current_user)],
     db: Annotated[Session, Depends(get_db)],

@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { SessionProvider } from './contexts/SessionContext'
 import { AuthGuard } from './guards/AuthGuard'
+import { AdminGuard } from './guards/AdminGuard'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { LandingScreen } from './screens/LandingScreen'
 import { AuthScreen } from './screens/AuthScreen'
@@ -8,6 +9,7 @@ import { GuidelinesScreen } from './screens/GuidelinesScreen'
 import { WorkScreen } from './screens/WorkScreen'
 import { AllCaughtUpScreen } from './screens/AllCaughtUpScreen'
 import { ProgressScreen } from './screens/ProgressScreen'
+import { AdminScreen } from './screens/AdminScreen'
 
 export default function App() {
   return (
@@ -26,6 +28,7 @@ export default function App() {
             <Route path="/work" element={<AuthGuard><WorkScreen /></AuthGuard>} />
             <Route path="/done" element={<AuthGuard><AllCaughtUpScreen /></AuthGuard>} />
             <Route path="/me" element={<AuthGuard><ProgressScreen /></AuthGuard>} />
+            <Route path="/admin" element={<AdminGuard><AdminScreen /></AdminGuard>} />
 
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

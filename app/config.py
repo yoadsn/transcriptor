@@ -1,3 +1,4 @@
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -9,6 +10,14 @@ class Settings(BaseSettings):
     secret_key: str = "dev-secret-key"
     consent_version: str = "1.0"
     dev_mode: bool = False
+    admin_emails: list[str] = []
+
+    @field_validator("admin_emails", mode="before")
+    @classmethod
+    def parse_admin_emails(cls, v: object) -> list[str]:
+        if isinstance(v, str):
+            return [e.strip() for e in v.split(",") if e.strip()]
+        return v  # type: ignore[return-value]
 
 
 settings = Settings()
