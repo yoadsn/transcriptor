@@ -2,7 +2,6 @@ import { useRef, useEffect, useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useLoop } from '../hooks/useLoop'
 import type { LoopLine, SaveToast } from '../hooks/useLoop'
-import type { FlagKind } from '../types'
 import { Icon } from '../components/shared'
 
 const EASE = 'cubic-bezier(.3,.8,.3,1)'
@@ -35,57 +34,6 @@ function ImmTicks({ lines, cursor, onJump }: {
           </button>
         )
       })}
-    </div>
-  )
-}
-
-// ── Flag popover ──────────────────────────────────────────────────────────────
-function FlagButton({ reasons, onPick }: {
-  reasons: { kind: FlagKind; label: string }[]
-  onPick: (kind: FlagKind) => void
-}) {
-  const [open, setOpen] = useState(false)
-  const ref = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    if (!open) return
-    const handler = (e: PointerEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
-    }
-    document.addEventListener('pointerdown', handler, true)
-    return () => document.removeEventListener('pointerdown', handler, true)
-  }, [open])
-
-  return (
-    <div ref={ref} style={{ position: 'relative' }}>
-      <button className="tl-flagbtn" onClick={() => setOpen((o) => !o)}>
-        <Icon name="flag" size={15} color="var(--tl-muted)" />
-        <span>לא קריא / דיווח</span>
-      </button>
-      {open && (
-        <div style={{
-          position: 'absolute', bottom: 'calc(100% + 8px)',
-          right: 0, minWidth: 196,
-          background: 'var(--tl-surface)', borderRadius: 12,
-          border: '0.5px solid var(--tl-border)',
-          boxShadow: '0 10px 34px rgba(40,30,20,0.16)',
-          padding: 6, zIndex: 30,
-        }}>
-          <div style={{
-            fontSize: 12, color: 'var(--tl-muted)',
-            padding: '6px 10px 4px', fontFamily: 'var(--font-ui)',
-          }}>מה הבעיה בשורה?</div>
-          {reasons.map((r) => (
-            <button
-              key={r.kind}
-              className="tl-reason"
-              onClick={() => { setOpen(false); onPick(r.kind) }}
-            >
-              {r.label}
-            </button>
-          ))}
-        </div>
-      )}
     </div>
   )
 }
@@ -189,16 +137,29 @@ export function WorkScreen() {
   const cardRef = useRef<HTMLDivElement>(null)
   const drag = useRef<{ y: number } | null>(null)
 
-  const [box, setBox] = useState({ w: 860, h: 560 })
+  // Initialize from window so there's no layout flash on first render
+  const [box, setBox] = useState({ w: window.innerWidth, h: window.innerHeight })
   const [cardH, setCardH] = useState(150)
   const [peek, setPeek] = useState(0)
+  // Track full viewport width separately — box.w measures the image column in wide mode,
+  // so using it for the wide breakpoint would oscillate (60% of 1280 < 960).
+  const [viewportW, setViewportW] = useState(window.innerWidth)
+
+  const wide = viewportW >= 960
 
   // Navigate to AllCaughtUp when no session
   useEffect(() => {
     if (!L.loading && L.noSession) navigate('/done', { replace: true })
   }, [L.loading, L.noSession, navigate])
 
-  // Measure container
+  // Track full viewport width for the wide breakpoint
+  useEffect(() => {
+    const handler = () => setViewportW(window.innerWidth)
+    window.addEventListener('resize', handler)
+    return () => window.removeEventListener('resize', handler)
+  }, [])
+
+  // Measure image column (wrapRef) for spotlight math
   useEffect(() => {
     const el = wrapRef.current
     if (!el || typeof ResizeObserver === 'undefined') return
@@ -225,13 +186,20 @@ export function WorkScreen() {
   // Snap back to line when cursor advances
   useEffect(() => { setPeek(0) }, [L.cursor])
 
+  // ── Go-back: find the last line this user annotated before the current cursor ─
+  let prevDoneIdx = -1
+  for (let i = L.cursor - 1; i >= 0; i--) {
+    const s = L.lines[i]?.status
+    if (s === 'done_by_you' || s === 'flagged') { prevDoneIdx = i; break }
+  }
+  const canGoBack = prevDoneIdx >= 0
+
   // ── Layout math ──────────────────────────────────────────────────────────────
   const sideM = window.innerWidth < 768 ? 14 : 26
   const headerH = window.innerWidth < 768 ? 36 : 44
   const pageDispW = Math.max(40, box.w - sideM * 2)
   const page = L.page
 
-  // When page not yet loaded, use placeholder dimensions
   const pagePxW = page?.width_px ?? 474
   const pagePxH = page?.height_px ?? 218
   const scale = pageDispW / pagePxW
@@ -244,7 +212,9 @@ export function WorkScreen() {
   const lh = b.h * scale
 
   const baseTop = headerH + (window.innerWidth < 768 ? 6 : 12)
-  const cardTopY = box.h - cardH
+  // In wide mode the console is a sidebar, so the full column height is available
+  const effectiveCardH = wide ? 0 : cardH
+  const cardTopY = box.h - effectiveCardH
   const zonePad = window.innerWidth < 768 ? 12 : 26
   const availH = cardTopY - zonePad - baseTop
   const fits = pageDispH <= availH
@@ -336,6 +306,27 @@ export function WorkScreen() {
             pointerEvents: 'none',
           }}
         />
+        {/* Faint outlines for all line boxes — subtle spatial context */}
+        {L.lines.map((line, i) => {
+          if (i === L.cursor) return null
+          const ox = line.bbox.x * scale
+          const oy = line.bbox.y * scale
+          const ow = line.bbox.w * scale
+          const oh = line.bbox.h * scale
+          const done = line.status === 'done_by_you' || line.status === 'flagged'
+          return (
+            <div key={line.id} style={{
+              position: 'absolute', left: ox, top: oy, width: ow, height: oh,
+              border: done
+                ? '1.5px solid rgba(80,210,130,0.7)'
+                : '1.5px solid rgba(255,210,120,0.6)',
+              borderRadius: 2,
+              pointerEvents: 'none',
+              transition: spotTransition,
+            }} />
+          )
+        })}
+
         {/* spotlight cut-out */}
         {L.current && (
           <div style={{
@@ -418,11 +409,18 @@ export function WorkScreen() {
   )
 
   // ── Input console ─────────────────────────────────────────────────────────
-  const console_ = (
-    <div
-      ref={cardRef}
-      dir="rtl"
-      style={{
+  const consoleCardStyle: React.CSSProperties = wide
+    ? {
+        width: '100%',
+        padding: '20px 24px',
+        background: 'color-mix(in srgb, var(--tl-surface) 86%, transparent)',
+        backdropFilter: 'blur(14px) saturate(1.1)',
+        WebkitBackdropFilter: 'blur(14px) saturate(1.1)',
+        border: '0.5px solid var(--tl-border)',
+        borderRadius: 16,
+        boxShadow: '0 8px 30px rgba(40,30,20,0.14)',
+      }
+    : {
         position: 'absolute', left: 0, right: 0, bottom: 0, zIndex: 6,
         padding: window.innerWidth < 768 ? '12px 14px 14px' : '15px 26px 18px',
         background: 'color-mix(in srgb, var(--tl-surface) 86%, transparent)',
@@ -431,8 +429,10 @@ export function WorkScreen() {
         borderTop: '0.5px solid var(--tl-border)',
         borderRadius: '16px 16px 0 0',
         boxShadow: '0 -10px 30px rgba(40,30,20,0.14)',
-      }}
-    >
+      }
+
+  const console_ = (
+    <div ref={cardRef} dir="rtl" style={consoleCardStyle}>
       <div style={{
         display: 'flex', alignItems: 'center', gap: 8, marginBottom: 9,
         fontFamily: 'var(--font-ui)', fontSize: 12, color: 'var(--tl-muted)',
@@ -472,12 +472,34 @@ export function WorkScreen() {
         }}
       />
 
+      {/* Flag pills + go-back button */}
       <div style={{
-        display: 'flex', alignItems: 'center',
-        justifyContent: 'space-between',
-        marginTop: 11, gap: 14,
+        display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center',
+        marginTop: 10, marginBottom: 4,
       }}>
-        <FlagButton reasons={L.FLAG_REASONS} onPick={L.flag} />
+        {/* Go back to last annotated line */}
+        <button
+          className="tl-reason-inline"
+          onClick={() => L.goTo(prevDoneIdx)}
+          disabled={!canGoBack}
+          title="חזרה לשורה הקודמת"
+          style={{ opacity: canGoBack ? 1 : 0.35 }}
+        >
+          <Icon name="back" size={13} color="var(--tl-muted)" />
+        </button>
+        {L.FLAG_REASONS.map((r) => (
+          <button
+            key={r.kind}
+            className="tl-reason-inline"
+            onClick={() => L.flag(r.kind)}
+          >
+            {r.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Submit */}
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 6 }}>
         <button
           className="tl-submit"
           onClick={L.submit}
@@ -491,18 +513,43 @@ export function WorkScreen() {
     </div>
   )
 
+  // ── Wide: side-by-side columns; narrow: stacked ───────────────────────────
+  const innerContent = wide ? (
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'row', minHeight: 0 }}>
+      {/* Image column — 60% */}
+      <div style={{ flex: '0 0 60%', position: 'relative' }}>
+        {L.loading
+          ? <Skeleton top={baseTop} sideM={sideM} pageH={pageDispH} />
+          : stage
+        }
+      </div>
+      {/* Console column */}
+      <div style={{
+        flex: 1,
+        display: 'flex', alignItems: 'center',
+        padding: '24px 32px',
+        background: 'var(--tl-page)',
+        borderLeft: '0.5px solid var(--tl-border)',
+      }}>
+        {!L.loading && console_}
+      </div>
+    </div>
+  ) : (
+    <div style={{ flex: 1, position: 'relative', minHeight: 0 }}>
+      {L.loading
+        ? <Skeleton top={baseTop} sideM={sideM} pageH={pageDispH} />
+        : stage
+      }
+      {!L.loading && console_}
+    </div>
+  )
+
   return (
     <div dir="rtl" lang="he" style={{
       height: '100vh', background: 'var(--tl-page)',
       position: 'relative', display: 'flex', flexDirection: 'column',
     }}>
-      <div style={{ flex: 1, position: 'relative', minHeight: 0 }}>
-        {L.loading
-          ? <Skeleton top={baseTop} sideM={sideM} pageH={pageDispH} />
-          : stage
-        }
-        {!L.loading && console_}
-      </div>
+      {innerContent}
 
       {/* page-fill progress bar (fills RTL) */}
       <div style={{ height: 5, background: 'var(--tl-muted-fill)', flexShrink: 0 }}>
