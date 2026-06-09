@@ -18,9 +18,10 @@ if settings.dev_mode:
         allow_methods=["*"],
         allow_headers=["*"],
     )
-    _data_dir = Path(__file__).parent.parent / "data_sample"
-    if _data_dir.exists():
-        app.mount("/images", StaticFiles(directory=str(_data_dir)), name="images")
+
+_data_dir = Path(__file__).parent.parent / "data_sample"
+if _data_dir.exists():
+    app.mount("/images", StaticFiles(directory=str(_data_dir)), name="images")
 
 app.include_router(community.router, prefix="/api")
 app.include_router(session.router, prefix="/api")

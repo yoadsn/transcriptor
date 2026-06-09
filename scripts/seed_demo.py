@@ -53,8 +53,8 @@ def _jpeg_dims(path: str) -> tuple[int, int]:
 # ── Seed ─────────────────────────────────────────────────────────────────────
 
 DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data_sample")
-DEMO_BATCH_EXTERNAL_ID = "demo-data-sample"
-N_LINES = 20
+DEMO_BATCH_EXTERNAL_ID = "demo-data-sample-v2"
+N_LINES = 10
 
 IMAGE_FILES = sorted(
     f for f in os.listdir(DATA_DIR) if f.lower().endswith((".jpg", ".jpeg"))
