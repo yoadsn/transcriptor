@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useSession } from '../contexts/SessionContext'
-import { BrandMark, ManuscriptPreview, PrimaryBtn } from '../components/shared'
+import { BrandMark, ManuscriptPreview } from '../components/shared'
 
 function GoogleMark({ size = 18 }: { size?: number }) {
   return (
@@ -16,7 +16,7 @@ function GoogleMark({ size = 18 }: { size?: number }) {
 
 function AuthForm({ isMobile }: { isMobile?: boolean }) {
   const handleGoogle = () => {
-    window.location.href = '/api/auth/google'
+    window.location.href = '/xhost-auth/login?return_to=/work'
   }
 
   return (
@@ -44,20 +44,13 @@ function AuthForm({ isMobile }: { isMobile?: boolean }) {
 
 export function AuthScreen() {
   const navigate = useNavigate()
-  const [searchParams] = useSearchParams()
-  const { setToken, isAuthenticated } = useSession()
+  const { isAuthenticated, isLoading } = useSession()
 
   useEffect(() => {
-    const urlToken = searchParams.get('token')
-    if (urlToken) {
-      setToken(urlToken)
-      navigate('/work', { replace: true })
-      return
-    }
-    if (isAuthenticated) {
+    if (!isLoading && isAuthenticated) {
       navigate('/work', { replace: true })
     }
-  }, [searchParams, isAuthenticated, setToken, navigate])
+  }, [isLoading, isAuthenticated, navigate])
 
   const [viewportW, setViewportW] = useState(window.innerWidth)
   useEffect(() => {

@@ -4,22 +4,13 @@ const BASE = ''
 
 export const CONSENT_VERSION = '1.0'
 
-let authToken: string | null = null
-
-export function setAuthToken(t: string): void {
-  authToken = t
-}
-
-export function getAuthToken(): string | null {
-  return authToken
-}
-
 async function request<T>(path: string, options?: RequestInit): Promise<T | null> {
-  const headers: Record<string, string> = { 'Content-Type': 'application/json' }
-  if (authToken) headers['Authorization'] = `Bearer ${authToken}`
   const res = await fetch(BASE + path, {
     ...options,
-    headers: { ...headers, ...(options?.headers as Record<string, string> | undefined) },
+    headers: {
+      'Content-Type': 'application/json',
+      ...(options?.headers as Record<string, string> | undefined),
+    },
   })
   if (res.status === 204) return null
   if (!res.ok) throw new Error(`${res.status}`)

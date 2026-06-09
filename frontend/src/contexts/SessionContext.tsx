@@ -6,71 +6,75 @@ import {
   useCallback,
   type ReactNode,
 } from 'react'
-import { setAuthToken } from '../api'
 import type { SessionDTO } from '../types'
 
-const TOKEN_KEY = 'auth_token'
-const CONSENT_KEY = 'consent_given'
+const CONSENT_KEY_PREFIX = 'consent_given_'
+
+interface WhoAmI {
+  logged_in: boolean
+  email?: string
+  name?: string
+  sub?: string
+}
 
 interface SessionContextValue {
-  token: string | null
   isAuthenticated: boolean
+  isLoading: boolean
+  userEmail: string | null
+  userName: string | null
   consentGiven: boolean
   currentSession: SessionDTO | null
-  setToken: (token: string) => void
-  clearToken: () => void
   setConsentGiven: (val: boolean) => void
   setCurrentSession: (session: SessionDTO | null) => void
+  logout: () => void
 }
 
 const SessionContext = createContext<SessionContextValue | null>(null)
 
 export function SessionProvider({ children }: { children: ReactNode }) {
-  const [token, setTokenState] = useState<string | null>(() =>
-    localStorage.getItem(TOKEN_KEY)
-  )
-  const [consentGiven, setConsentGivenState] = useState<boolean>(() =>
-    localStorage.getItem(CONSENT_KEY) === 'true'
-  )
+  const [isLoading, setIsLoading] = useState(true)
+  const [whoami, setWhoami] = useState<WhoAmI | null>(null)
+  const [consentGiven, setConsentGivenState] = useState(false)
   const [currentSession, setCurrentSession] = useState<SessionDTO | null>(null)
 
   useEffect(() => {
-    if (token) setAuthToken(token)
-  }, [token])
-
-  const setToken = useCallback((newToken: string) => {
-    localStorage.setItem(TOKEN_KEY, newToken)
-    localStorage.setItem(CONSENT_KEY, 'true')
-    setAuthToken(newToken)
-    setTokenState(newToken)
-    setConsentGivenState(true)
-  }, [])
-
-  const clearToken = useCallback(() => {
-    localStorage.removeItem(TOKEN_KEY)
-    localStorage.removeItem(CONSENT_KEY)
-    setTokenState(null)
-    setConsentGivenState(false)
+    fetch('/xhost-auth/whoami')
+      .then(r => r.json())
+      .then((data: WhoAmI) => {
+        setWhoami(data)
+        if (data.logged_in && data.sub) {
+          setConsentGivenState(
+            localStorage.getItem(CONSENT_KEY_PREFIX + data.sub) === 'true'
+          )
+        }
+      })
+      .catch(() => setWhoami({ logged_in: false }))
+      .finally(() => setIsLoading(false))
   }, [])
 
   const setConsentGiven = useCallback((val: boolean) => {
-    localStorage.setItem(CONSENT_KEY, val ? 'true' : 'false')
+    if (whoami?.sub) {
+      localStorage.setItem(CONSENT_KEY_PREFIX + whoami.sub, val ? 'true' : 'false')
+    }
     setConsentGivenState(val)
-  }, [])
+  }, [whoami?.sub])
 
-  const isAuthenticated = !!token
+  const logout = useCallback(() => {
+    window.location.href = '/xhost-auth/logout?return_to=/'
+  }, [])
 
   return (
     <SessionContext.Provider
       value={{
-        token,
-        isAuthenticated,
+        isAuthenticated: !!(whoami?.logged_in && whoami.sub),
+        isLoading,
+        userEmail: whoami?.email ?? null,
+        userName: whoami?.name ?? null,
         consentGiven,
         currentSession,
-        setToken,
-        clearToken,
         setConsentGiven,
         setCurrentSession,
+        logout,
       }}
     >
       {children}

@@ -11,6 +11,9 @@ class Settings(BaseSettings):
     consent_version: str = "1.0"
     dev_mode: bool = False
     admin_emails: list[str] = []
+    google_client_id: str = ""
+    google_client_secret: str = ""
+    google_redirect_uri: str = "https://transcriptor-yanirmr.xhostd.com/api/auth/callback"
 
     @field_validator("admin_emails", mode="before")
     @classmethod

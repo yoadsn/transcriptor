@@ -7,9 +7,8 @@ interface AuthGuardProps {
 }
 
 export function AuthGuard({ children }: AuthGuardProps) {
-  const { isAuthenticated } = useSession()
-  if (!isAuthenticated) {
-    return <Navigate to="/auth" replace />
-  }
+  const { isAuthenticated, isLoading } = useSession()
+  if (isLoading) return null
+  if (!isAuthenticated) return <Navigate to="/auth" replace />
   return <>{children}</>
 }
