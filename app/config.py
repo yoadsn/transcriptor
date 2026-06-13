@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     consent_version: str = "1.0"
     dev_mode: bool = False
     local_data_dir: str = "data_sample"
+    images_serve_origin: str = ""
     admin_emails: list[str] = []
     google_client_id: str = ""
     google_client_secret: str = ""

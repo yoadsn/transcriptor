@@ -5,8 +5,18 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
-from app.api.routes import admin, community, consent, leaderboard, progress, session, transcription, xhost_local_emulation
+from app.api.routes import (
+    admin,
+    community,
+    consent,
+    leaderboard,
+    progress,
+    session,
+    transcription,
+    xhost_local_emulation,
+)
 from app.config import settings
+from app.storage import LOCAL_IMAGES_SERVE_ROOT_PATH
 
 app = FastAPI(title="Transcriptor")
 
@@ -22,7 +32,11 @@ if settings.dev_mode:
 _data_dir = Path(settings.local_data_dir)
 if _data_dir.exists():
     print(f"Serving images from {_data_dir.absolute()}")
-    app.mount("/images", StaticFiles(directory=str(_data_dir)), name="images")
+    app.mount(
+        f"/{LOCAL_IMAGES_SERVE_ROOT_PATH}",
+        StaticFiles(directory=str(_data_dir)),
+        name="images",
+    )
 
 app.include_router(community.router, prefix="/api")
 app.include_router(session.router, prefix="/api")
@@ -42,7 +56,9 @@ def health() -> dict:
 
 _frontend_dist = Path(__file__).parent.parent / "frontend" / "dist"
 if _frontend_dist.exists():
-    app.mount("/assets", StaticFiles(directory=str(_frontend_dist / "assets")), name="assets")
+    app.mount(
+        "/assets", StaticFiles(directory=str(_frontend_dist / "assets")), name="assets"
+    )
 
     @app.get("/{full_path:path}", include_in_schema=False)
     async def serve_spa(full_path: str) -> FileResponse:
