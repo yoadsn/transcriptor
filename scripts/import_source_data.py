@@ -11,12 +11,12 @@ Examples:
         --source handwriting_form --license CC-BY-4.0
 
     uv run python scripts/import_source_data.py s3://my-bucket/data/ \
-        --source handwriting_form --license CC-BY-4.0
+        --source handwriting_form --license CC-BY-4.0 \
+        --s3-key <key> --s3-secret <secret> --s3-region <region>
 """
 import argparse
 import csv
 import json
-import os
 import sys
 import tempfile
 from pathlib import Path
@@ -50,12 +50,24 @@ def _parse_s3_uri(uri: str) -> tuple[str, str]:
     return bucket, prefix
 
 
-def _download_s3_to_temp(uri: str) -> Path:
+def _download_s3_to_temp(uri: str, aws_key: str, aws_secret: str, aws_region: str) -> Path:
+    """Download only manifests, metadata.json, and lines JSON files from S3.
+
+    Skips image files since they are served directly from the S3 bucket.
+    """
     import boto3
 
     bucket, prefix = _parse_s3_uri(uri)
-    s3 = boto3.client("s3")
+    s3 = boto3.client(
+        "s3",
+        aws_access_key_id=aws_key,
+        aws_secret_access_key=aws_secret,
+        region_name=aws_region,
+    )
     tmpdir = Path(tempfile.mkdtemp(prefix="import_source_"))
+
+    # File patterns we actually need for import
+    manifest_names = {"submissions.csv", "pages.csv"}
 
     paginator = s3.get_paginator("list_objects_v2")
     for page in paginator.paginate(Bucket=bucket, Prefix=prefix):
@@ -64,6 +76,16 @@ def _download_s3_to_temp(uri: str) -> Path:
             if key.endswith("/"):
                 continue
             rel = key.removeprefix(prefix)
+            filename = Path(rel).name
+
+            # Keep: top-level manifests, metadata.json, and lines JSON files
+            if filename in manifest_names:
+                pass  # always download
+            elif filename.endswith(".json"):
+                pass  # always download
+            else:
+                continue  # skip images and everything else
+
             dest = tmpdir / rel
             dest.parent.mkdir(parents=True, exist_ok=True)
             s3.download_file(bucket, key, str(dest))
@@ -86,6 +108,7 @@ def import_source_data(
     root: Path,
     source: str,
     license_: str,
+    remote_images: bool = False,
 ) -> None:
     submissions_csv = root / "submissions.csv"
     pages_csv = root / "pages.csv"
@@ -157,14 +180,28 @@ def import_source_data(
             lines_filename = page_row.get("lines_filename", "")
 
             image_path = sub_dir / image_filename
-            if not image_path.exists():
+            if not remote_images and not image_path.exists():
                 print(f"    WARN: image {image_filename} missing, skipping page")
                 continue
 
             page_external_id = f"{doc_filename}:p{page_number}"
             image_path_relative = f"{submission_id}/{image_filename}"
 
-            width_px, height_px = _image_dims(image_path)
+            width_px, height_px = None, None
+            lines_data = None
+
+            if lines_filename:
+                lines_path = sub_dir / lines_filename
+                if lines_path.exists():
+                    lines_data = json.loads(lines_path.read_text())
+                    width_px = lines_data.get("image_width")
+                    height_px = lines_data.get("image_height")
+
+            if width_px is None or height_px is None:
+                if remote_images:
+                    print(f"    WARN: no image dimensions for {image_filename}, skipping page")
+                    continue
+                width_px, height_px = _image_dims(image_path)
 
             # Upsert Page
             page = session.execute(
@@ -191,48 +228,45 @@ def import_source_data(
                 page.height_px = height_px
 
             # Upsert Lines
-            if lines_filename:
-                lines_path = sub_dir / lines_filename
-                if lines_path.exists():
-                    lines_data = json.loads(lines_path.read_text())
-                    for line_entry in lines_data.get("lines", []):
-                        line_idx = line_entry["index"]
-                        ext_id = mint_line_external_id(
-                            submission_id, page_external_id, line_idx
+            if lines_data is not None:
+                for line_entry in lines_data.get("lines", []):
+                    line_idx = line_entry["index"]
+                    ext_id = mint_line_external_id(
+                        submission_id, page_external_id, line_idx
+                    )
+
+                    bbox_array = line_entry["bbox"]
+                    bbox_dict = {
+                        "x": bbox_array[0],
+                        "y": bbox_array[1],
+                        "w": bbox_array[2] - bbox_array[0],
+                        "h": bbox_array[3] - bbox_array[1],
+                    }
+
+                    polygon = line_entry.get("polygon")
+                    confidence = line_entry.get("confidence")
+
+                    line = session.execute(
+                        select(Line).where(
+                            Line.page_id == page.id,
+                            Line.external_id == ext_id,
                         )
-
-                        bbox_array = line_entry["bbox"]
-                        bbox_dict = {
-                            "x": bbox_array[0],
-                            "y": bbox_array[1],
-                            "w": bbox_array[2] - bbox_array[0],
-                            "h": bbox_array[3] - bbox_array[1],
-                        }
-
-                        polygon = line_entry.get("polygon")
-                        confidence = line_entry.get("confidence")
-
-                        line = session.execute(
-                            select(Line).where(
-                                Line.page_id == page.id,
-                                Line.external_id == ext_id,
-                            )
-                        ).scalar_one_or_none()
-                        if line is None:
-                            line = Line(
-                                page_id=page.id,
-                                external_id=ext_id,
-                                line_index=line_idx,
-                                bbox=bbox_dict,
-                                polygon=polygon,
-                                detection_confidence=confidence,
-                            )
-                            session.add(line)
-                        else:
-                            line.line_index = line_idx
-                            line.bbox = bbox_dict
-                            line.polygon = polygon
-                            line.detection_confidence = confidence
+                    ).scalar_one_or_none()
+                    if line is None:
+                        line = Line(
+                            page_id=page.id,
+                            external_id=ext_id,
+                            line_index=line_idx,
+                            bbox=bbox_dict,
+                            polygon=polygon,
+                            detection_confidence=confidence,
+                        )
+                        session.add(line)
+                    else:
+                        line.line_index = line_idx
+                        line.bbox = bbox_dict
+                        line.polygon = polygon
+                        line.detection_confidence = confidence
 
         print(f"  Processed {len(completed_pages)} pages for {submission_id}")
 
@@ -249,14 +283,23 @@ def main() -> None:
     )
     parser.add_argument("--source", required=True, help="Batch source identifier")
     parser.add_argument("--license", required=True, help="License string")
+    parser.add_argument("--s3-key", help="AWS Access Key ID (required for S3 sources)")
+    parser.add_argument("--s3-secret", help="AWS Secret Access Key (required for S3 sources)")
+    parser.add_argument("--s3-region", help="AWS Region (required for S3 sources)")
 
     args = parser.parse_args()
 
     cleanup_temp = False
+    remote_images = False
     if _is_s3_uri(args.source_path):
-        print(f"Downloading from S3: {args.source_path}")
-        root = _download_s3_to_temp(args.source_path)
+        if not all([args.s3_key, args.s3_secret, args.s3_region]):
+            parser.error(
+                "--s3-key, --s3-secret, and --s3-region are required for S3 sources"
+            )
+        print(f"Downloading from S3 (manifests only): {args.source_path}")
+        root = _download_s3_to_temp(args.source_path, args.s3_key, args.s3_secret, args.s3_region)
         cleanup_temp = True
+        remote_images = True
     else:
         root = Path(args.source_path)
         if not root.is_dir():
@@ -265,7 +308,7 @@ def main() -> None:
 
     try:
         with SessionLocal() as session:
-            import_source_data(session, root, args.source, args.license)
+            import_source_data(session, root, args.source, args.license, remote_images)
             session.commit()
         print("Import complete.")
     finally:
